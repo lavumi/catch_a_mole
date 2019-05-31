@@ -33,6 +33,17 @@ var Camera = (function(){
 
     };
 
+
+    _camera.prototype.resizeCanvas = function(){
+        aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+
+        mat4.perspective(projectionMatrix,
+            fov,
+            aspect,
+            near,
+            far);
+    };
+
     _camera.prototype.GetProjectionMatrix = function(){
         return projectionMatrix;
     };

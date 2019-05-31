@@ -17,13 +17,12 @@ var Renderer = (function (){
 
     var _renderer = function(cb){
 
-        canvas = document.querySelector("#glCanvas");
-        gl = this.gl = canvas.getContext("webgl");
+       if( initialize() === false)
+           return null;
+
+
         // Only continue if WebGL is available and working
-        if (gl === null) {
-            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
-            return;
-        }
+
 
         window.addEventListener('resize', resizeCanvas, false);
         resizeCanvas();
@@ -56,11 +55,20 @@ var Renderer = (function (){
                 cb();
             }.bind(this)
         );
+    };
 
+    var initialize = function(){
+        canvas = document.querySelector("#glCanvas");
+        gl = canvas.getContext("webgl");
 
+        if (gl === null) {
+            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+            return false;
+        }
 
         camera = new Camera( gl );
 
+        return true;
     };
 
 
@@ -68,6 +76,7 @@ var Renderer = (function (){
         canvas.width = window.innerWidth - 40;
         canvas.height = window.innerHeight - 40;
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        camera.resizeCanvas();
     };
 
 
