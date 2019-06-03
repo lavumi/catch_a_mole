@@ -2,8 +2,6 @@
 
 var TestDraw = (function (){
 
-
-    var model;
     var directionalLight;
     var canvas;
 
@@ -23,18 +21,14 @@ var TestDraw = (function (){
 
     DrawMain.prototype.start = function(){
 
-
-       // console.log(canvas);
-
-
-
       //  model = new Sphere(3);
         directionalLight = new Light();
         directionalLight.setDirection( 1.0, 0.0, 0.0);
         this.renderer.setLight( directionalLight );
 
-        tempModel = new ModelBase('Model/go_gopher_high.obj');
+        tempModel = new ModelBase('Model/gopher.obj');
 
+       // tempModel = new ModelBase('Model/go_gopher_high.obj');
         requestAnimationFrame(this.update.bind(this));
     };
 

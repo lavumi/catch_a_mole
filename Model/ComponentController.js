@@ -43,9 +43,9 @@ var ModelBase = (function(){
         for( var i = 0; i < tempArr.length ; i++){
             tempArr_t = tempArr[i].split(' ');
             if( tempArr_t[0] === 'v'){
-                vertex_temp.push(tempArr_t[1] / 100);
                 vertex_temp.push(tempArr_t[2] / 100);
-                vertex_temp.push(tempArr_t[3]/100);
+                vertex_temp.push(tempArr_t[3] / 100);
+                vertex_temp.push(tempArr_t[4] / 100 );
             }
             else if( tempArr_t[0] === 'vt'){
                 texCoord_temp.push(tempArr_t[1]);
