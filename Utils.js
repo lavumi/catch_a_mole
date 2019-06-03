@@ -43,23 +43,93 @@ function readShader (singleShaderData, onLoaded) {
 }
 
 function readObj (objPath, onLoaded) {
-    var result = {};
-
-
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (request.readyState === 4) { //if this reqest is done
             //add this file to the results object
-            result = request.responseText;
+            var result = readObjData(request.responseText);
             onLoaded( result );
         }
     };
     request.open('GET', objPath, true);
     request.send();
-
 }
 
+var readObjData = function( objStr ){
 
+    var vertex_temp = [];
+    var texCoord_temp = [];
+    var normal_temp = [];
+    var vertex = [];
+    var normal = [];
+    var indicies = [];
+
+    var hashData = {};
+
+
+    var quadIndex = [0, 1, 2, 0, 2, 3];
+
+
+
+
+
+    var tempArr = objStr.split('\n');
+    var tempArr_t;
+    for( var i = 0; i < tempArr.length ; i++){
+        tempArr_t = tempArr[i].split(' ');
+        if( tempArr_t[0] === 'v'){
+            vertex_temp.push(tempArr_t[2] / 100);
+            vertex_temp.push(tempArr_t[3] / 100);
+            vertex_temp.push(tempArr_t[4] / 100 );
+        }
+        else if( tempArr_t[0] === 'vt'){
+            texCoord_temp.push(tempArr_t[1]);
+            texCoord_temp.push(tempArr_t[2]);
+        }
+        else if( tempArr_t[0] === 'vn'){
+            normal_temp.push(tempArr_t[1]);
+            normal_temp.push(tempArr_t[2]);
+            normal_temp.push(    tempArr_t[3]);
+        }
+        else if( tempArr_t[0] === 'f'){
+
+            for(var j = 0;j < quadIndex.length;j++){
+
+                var triangleIndex = quadIndex[j] + 1;
+
+                var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
+                var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
+
+                var hashKey = (vIndex0 << 16) + nIndex0;
+                var index_temp = -1;
+
+                if (hashData.hasOwnProperty( hashKey )){
+                    indicies.push( hashData[hashKey]);
+                }
+                else{
+                    index_temp = vertex.length / 3;
+                    hashData[ hashKey ] = index_temp;
+                    indicies.push( index_temp );
+                    vertex.push(vertex_temp[vIndex0 * 3 ]);
+                    vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
+                    vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
+                    normal.push(normal_temp[nIndex0 * 3]);
+                    normal.push(normal_temp[nIndex0 * 3 + 1 ]);
+                    normal.push(normal_temp[nIndex0 * 3 + 2 ]);
+
+                }
+
+            }
+        }
+    }
+
+    return {
+        vertexs : vertex,
+        normals : normal,
+        indices : indicies,
+    }
+
+};
 
 function createShader( shaderObj,  cb){
 
