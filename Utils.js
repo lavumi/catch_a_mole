@@ -42,6 +42,24 @@ function readShader (singleShaderData, onLoaded) {
     }
 }
 
+function readObj (objPath, onLoaded) {
+    var result = {};
+
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) { //if this reqest is done
+            //add this file to the results object
+            result = request.responseText;
+            onLoaded( result );
+        }
+    };
+    request.open('GET', objPath, true);
+    request.send();
+
+}
+
+
 
 function createShader( shaderObj,  cb){
 

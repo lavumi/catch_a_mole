@@ -185,7 +185,6 @@ var Sphere = (function(){
         vertexCount = positions.length;
         indexCount = indices.length ;
 
-        console.log(indexCount);
         buffer.position = positionBuffer;
         buffer.normal = normalBuffer;
         buffer.indices = indexBuffer;

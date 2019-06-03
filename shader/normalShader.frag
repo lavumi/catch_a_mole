@@ -1,5 +1,5 @@
 
-varying lowp float vNormal;
+varying lowp vec4 vNormal;
 void main() {
-    gl_FragColor = vec4(vNormal, vNormal, vNormal, 1);
+    gl_FragColor = vNormal;//vec4(0, 0.2, 1, 1);
 }

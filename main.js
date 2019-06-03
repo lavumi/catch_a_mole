@@ -7,8 +7,10 @@ var TestDraw = (function (){
     var directionalLight;
     var canvas;
 
-    var DrawMain = function(){
 
+    var tempModel;
+
+    var DrawMain = function(){
         canvas = document.querySelector("#glCanvas");
 
         this.renderer = new Renderer(function(){
@@ -26,10 +28,13 @@ var TestDraw = (function (){
 
 
 
-        model = new Sphere(3);
+      //  model = new Sphere(3);
         directionalLight = new Light();
         directionalLight.setDirection( 1.0, 0.0, 0.0);
         this.renderer.setLight( directionalLight );
+
+        tempModel = new ModelBase('Model/go_gopher_high.obj');
+
         requestAnimationFrame(this.update.bind(this));
     };
 
@@ -42,9 +47,10 @@ var TestDraw = (function (){
         now *= 0.001;
         const deltaTime = now - then;
         then = now;
-        model.update(deltaTime);
+        tempModel.update(deltaTime);
         directionalLight.update(deltaTime);
-        this.renderer.draw(model);
+
+        this.renderer.draw(tempModel);
         requestAnimationFrame(this.update.bind(this));
     };
 

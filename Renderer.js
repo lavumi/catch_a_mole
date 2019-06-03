@@ -27,7 +27,7 @@ var Renderer = (function (){
         window.addEventListener('resize', resizeCanvas, false);
         resizeCanvas();
 
-        this.clearScreen( 0.2, 0.2, 1, 1);
+        this.clearScreen( 1, 0.6, 0.2, 1);
 
         var shaders = {
             simpleShader: {
