@@ -247,7 +247,6 @@ var Utils = {
                     targetMaterialHashData = hashData[ tempArr_t[1] ];
                 }
             }
-            console.log("------", resultObj);
             return resultObj;
 
         };

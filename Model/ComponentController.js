@@ -56,14 +56,6 @@ var ModelBase = (function(){
 
         }
 
-
-
-
-
-
-        console.log( resultObj );
-
-
         return resultObj;
     };
 
