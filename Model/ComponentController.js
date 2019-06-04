@@ -22,33 +22,49 @@ var ModelBase = (function(){
     };
 
 
-    var makeBuffer = function(objData){
+    var makeBuffer = function(dataObj){
+
+        var resultObj = {};
+
+        for(var key in dataObj){
+
+            var singleData = dataObj[key];
+            var vertexBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(singleData.vertex), gl.STATIC_DRAW);
 
 
-        var vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objData.vertexs), gl.STATIC_DRAW);
+            var normalBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(singleData.normal), gl.STATIC_DRAW);
 
 
-        var normalBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objData.normals), gl.STATIC_DRAW);
-
-
-        var indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-            new Uint16Array(objData.indices), gl.STATIC_DRAW);
+            var indexBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+                new Uint16Array(singleData.index), gl.STATIC_DRAW);
 
 
 
 
-        return {
-            vertex : vertexBuffer,
-            normal : normalBuffer,
-            index : indexBuffer,
-            indexCount : objData.indices.length
+            resultObj[key] = {
+                vertex : vertexBuffer,
+                normal : normalBuffer,
+                index : indexBuffer,
+                indexCount : singleData.index.length
+            }
+
         }
+
+
+
+
+
+
+        console.log( resultObj );
+
+
+        return resultObj;
     };
 
     model.prototype.draw = function( camera, light, shaderInfo ){
@@ -56,35 +72,7 @@ var ModelBase = (function(){
         if(readyToDraw === false)
             return;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData.vertex);
-        gl.vertexAttribPointer(
-            shaderInfo.attribLocations['aVertexPosition'],
-            3, // position x, y, z 3개
-            gl.FLOAT,
-            false,
-            0,
-            0);
 
-
-        gl.enableVertexAttribArray(
-            shaderInfo.attribLocations['aVertexPosition']);
-
-
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData.normal);
-        gl.vertexAttribPointer(
-            shaderInfo.attribLocations['aVertexNormal'],
-            3,
-            gl.FLOAT,
-            true,
-            0,
-            0);
-        gl.enableVertexAttribArray(
-            shaderInfo.attribLocations['aVertexNormal']);
-
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, GopherBufferData.index);
-       // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, GopherBufferData.nIndex);
 
         gl.useProgram(shaderInfo.program);
 
@@ -112,15 +100,59 @@ var ModelBase = (function(){
             light.getDirection());
 
 
-        {
 
-            const type = gl.UNSIGNED_SHORT;
-            const offset = 0;
 
-            gl.drawElements(gl.TRIANGLES, GopherBufferData.indexCount, type, offset);
+
+
+
+        for(var key in GopherBufferData){
+
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData[key].vertex);
+            gl.vertexAttribPointer(
+                shaderInfo.attribLocations['aVertexPosition'],
+                3, // position x, y, z 3개
+                gl.FLOAT,
+                false,
+                0,
+                0);
+
+
+            gl.enableVertexAttribArray(
+                shaderInfo.attribLocations['aVertexPosition']);
+
+
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData[key].normal);
+            gl.vertexAttribPointer(
+                shaderInfo.attribLocations['aVertexNormal'],
+                3,
+                gl.FLOAT,
+                true,
+                0,
+                0);
+            gl.enableVertexAttribArray(
+                shaderInfo.attribLocations['aVertexNormal']);
+
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, GopherBufferData[key].index);
+
+
+            gl.uniform3fv(
+                shaderInfo.uniformLocations['uAmbient'],
+                MaterialData[key]['Ka']);
+
+            {
+
+                const type = gl.UNSIGNED_SHORT;
+                const offset = 0;
+
+                gl.drawElements(gl.TRIANGLES, GopherBufferData[key].indexCount, type, offset);
+            }
         }
 
-      //  readyToDraw = false;
+
+        //  readyToDraw = false;
     };
 
     model.prototype.update = function( dt ){

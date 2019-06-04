@@ -165,11 +165,16 @@ var Utils = {
             var normal_temp = [];
 
 
-            var vertex = [];
-            var normal = [];
-            var indicies = [];
+            // var vertex = [];
+            // var normal = [];
+            // var indicies = [];
+
+
+            var resultObj = {};
+            var targetMaterial = null;
 
             var hashData = {};
+            var targetMaterialHashData = null;
 
 
             var quadIndex = [0, 1, 2, 0, 2, 3];
@@ -199,6 +204,10 @@ var Utils = {
 
                     for(var j = 0;j < quadIndex.length;j++){
 
+                        if(targetMaterial === null){
+                            console.warn("targetMaterial is null");
+                            continue;
+                        }
                         var triangleIndex = quadIndex[j] + 1;
 
                         var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
@@ -207,31 +216,39 @@ var Utils = {
                         var hashKey = (vIndex0 << 16) + nIndex0;
                         var index_temp = -1;
 
-                        if (hashData.hasOwnProperty( hashKey )){
-                            indicies.push( hashData[hashKey]);
+                        if (targetMaterialHashData.hasOwnProperty( hashKey )){
+                            targetMaterial.index.push( targetMaterialHashData[hashKey]);
                         }
                         else{
-                            index_temp = vertex.length / 3;
-                            hashData[ hashKey ] = index_temp;
-                            indicies.push( index_temp );
-                            vertex.push(vertex_temp[vIndex0 * 3 ]);
-                            vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
-                            vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
-                            normal.push(normal_temp[nIndex0 * 3]);
-                            normal.push(normal_temp[nIndex0 * 3 + 1 ]);
-                            normal.push(normal_temp[nIndex0 * 3 + 2 ]);
+                            index_temp = targetMaterial.vertex.length / 3;
+                            targetMaterialHashData[ hashKey ] = index_temp;
+                            targetMaterial.index.push( index_temp );
+                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 ]);
+                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
+                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
+                            targetMaterial.normal.push(normal_temp[nIndex0 * 3]);
+                            targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 1 ]);
+                            targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 2 ]);
 
                         }
 
                     }
                 }
+                else if( tempArr_t[0] === 'usemtl' ){
+                    if( resultObj.hasOwnProperty(tempArr_t[1]) === false){
+                        resultObj[ tempArr_t[1]] = {
+                            vertex : [],
+                            normal : [],
+                            index : [],
+                        };
+                        hashData[ tempArr_t[1] ] = [];
+                    }
+                    targetMaterial = resultObj[ tempArr_t[1]];
+                    targetMaterialHashData = hashData[ tempArr_t[1] ];
+                }
             }
-
-            return {
-                vertexs : vertex,
-                normals : normal,
-                indices : indicies,
-            }
+            console.log("------", resultObj);
+            return resultObj;
 
         };
 
