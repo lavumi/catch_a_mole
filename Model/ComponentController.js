@@ -2,8 +2,10 @@ var ModelBase = (function(){
 
 
     var GopherBufferData;
+    var MaterialData;
     var worldMatrix = null;
     var readyToDraw = false;
+
 
     var model = function(objPath){
 
@@ -14,6 +16,9 @@ var ModelBase = (function(){
            readyToDraw = true;
        });
 
+       Utils.readMtl( 'Model/gopher.mtl', function(result){
+           MaterialData = result;
+       });
     };
 
 

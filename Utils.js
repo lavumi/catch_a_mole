@@ -248,6 +248,45 @@ var Utils = {
         request.send();
     },
 
+    readMtl : function( mtlPath, cb ){
+        var readMtlData = function( mtlStr ){
+            var result ={};
+            var tempArr = Utils.stringSplit( mtlStr,'\n' );
+            var tempArr_t;
+            var materialName = 'null';
+            for( var i = 0; i < tempArr.length ; i++) {
+               // console.log(tempArr[i]);
+                tempArr_t = Utils.stringSplit( tempArr[i],' ' );
+                if( tempArr_t[0] === 'newmtl'){
+                    materialName = tempArr_t[1];
+                    result[materialName] = {};
+                }
+                else if (tempArr_t[0] !== '#' ){
+                    result[materialName][ tempArr_t[0]] = [];
+                    for(var j = 1;j < tempArr_t.length;j++){
+                        result[materialName][ tempArr_t[0]].push( tempArr_t[j] );
+                    }
+                }
+            }
+
+            return result;
+
+        };
+
+
+
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState === 4) { //if this reqest is done
+                //add this file to the results object
+                var result = readMtlData(request.responseText);
+                cb( result );
+            }
+        };
+        request.open('GET', mtlPath, true);
+        request.send();
+    },
+
     /**
      * 백터 크기 반환
      * @param v
@@ -285,9 +324,16 @@ var Utils = {
      */
     stringSplit : function ( string, splitKey ){
         var result = string.split(splitKey);
+
+        for(var i = 0;i < result.length;i++){
+            result[i] = result[i].trim();
+        }
+
         result = result.filter( function( value){
-            return value.trim().length !== 0;
+            return value.length !== 0;
         });
+
+
         return result;
     }
 };
