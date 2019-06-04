@@ -1,13 +1,13 @@
-var gl;
 
 
 var Renderer = (function (){
 
     var shaderData;
-    var camera;
     var light;
-    var canvas;
+    var camera;
 
+
+    //기본 배경 색상
     var clearColor = {
         r : 0,
         g : 0,
@@ -15,20 +15,21 @@ var Renderer = (function (){
         a : 1
     };
 
+    /**
+     * 렌더러 생성(쉐이더 데이터)
+     * @param cb 생성후 실행할 콜백
+     * @private
+     */
     var _renderer = function(cb){
 
-       if( initialize() === false)
-           return null;
 
-
-        // Only continue if WebGL is available and working
-
-
+        //화면 리사이즈 할때 크기 조정
         window.addEventListener('resize', resizeCanvas, false);
-        resizeCanvas();
 
+        //화면 클리어 및 기본 클리어 색상 지정하기
         this.clearScreen( 1, 0.6, 0.2, 1);
 
+        //쉐이더 데이터 obj 만들기
         var shaders = {
             simpleShader: {
                 vertexShader: 'shader/simple.vert',
@@ -50,28 +51,15 @@ var Renderer = (function (){
             },
         };
 
-        initShaders(shaders, function( result ){
+        //쉐이더 비동기로 생성후 콜백 실행
+        ShaderUtil.initShaders(shaders, function( result ){
                 shaderData = result;
                 cb();
             }.bind(this)
         );
     };
 
-    var initialize = function(){
-        canvas = document.querySelector("#glCanvas");
-        gl = canvas.getContext("webgl");
-
-        if (gl === null) {
-            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
-            return false;
-        }
-
-        camera = new Camera( gl );
-
-        return true;
-    };
-
-
+    //region [Private Functions]
     var resizeCanvas = function(){
         canvas.width = window.innerWidth - 40;
         canvas.height = window.innerHeight - 40;
@@ -79,12 +67,26 @@ var Renderer = (function (){
         camera.resizeCanvas();
     };
 
+    //endregion
 
+
+    /**
+     * 화면 그리는 함수
+     * @param model 추후 배열로 변경해야함. 다른 쉐이더 사용할 경우도 고려할것
+     */
     _renderer.prototype.draw = function(model){
         this.clearScreen();
         model.draw( camera,light, shaderData.normalShader );
     };
 
+
+    /**
+     * 화면 클리어 함수
+     * @param r
+     * @param g
+     * @param b
+     * @param a
+     */
     _renderer.prototype.clearScreen = function( r, g, b, a ) {
 
         if( !!r && !!g && !!b && !!a){
@@ -94,14 +96,21 @@ var Renderer = (function (){
             clearColor.a = a;
         }
 
+        //클리어 칼라 등록
         gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-        gl.clearDepth(1.0);                 // Clear everything
-        gl.enable(gl.DEPTH_TEST);           // Enable depth testing
-        gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
-        // Clear the canvas before we start drawing on it.
+        //깊이버퍼 삭제
+        gl.clearDepth(1.0);
+        //깊이 테스트 켜기
+        gl.enable(gl.DEPTH_TEST);
 
+        //깊이 버퍼 less equal 로 세팅
+        gl.depthFunc(gl.LEQUAL);
+
+
+
+        //캔버스 클리어
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
@@ -111,6 +120,15 @@ var Renderer = (function (){
         light = pLight;
     };
 
+
+    /**
+     * 카메라 세팅후 화면 리사이즈 한번 해주자(필요 없을수도 있음) (여러대의 카메라 등록시 변경 필요)
+     * @param pCamera
+     */
+    _renderer.prototype.setCamera= function( pCamera ){
+        camera = pCamera;
+        resizeCanvas();
+    };
 
     return _renderer;
 }());

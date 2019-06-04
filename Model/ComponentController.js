@@ -7,18 +7,14 @@ var ModelBase = (function(){
 
     var model = function(objPath){
 
-        worldMatrix = mat4.create();
-       readObj( objPath, function( result){
+       worldMatrix = mat4.create();
+       Utils.readObj( objPath, function( result){
 
            GopherBufferData = makeBuffer(result);
            readyToDraw = true;
        });
 
     };
-
-
-
-
 
 
     var makeBuffer = function(objData){

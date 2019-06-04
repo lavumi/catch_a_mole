@@ -1,226 +1,294 @@
-function buildShader (gl, type, source) {
-    var shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
+var ShaderUtil = {
 
-    //log any errors
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.log(gl.getShaderInfoLog(shader));
-    }
-    return shader;
-}
+    /**
+     * 쉐이더 만들기
+     * @param shaderData
+     * @param cb
+     */
+    initShaders: function(shaderData, cb){
 
-/**
- * 경로상의 파일 읽어서 반환
- * @param singleShaderData
- * @param onLoaded
- */
-function readShader (singleShaderData, onLoaded) {
-    var result = {};
+        /**
+         *  parsed shader로 컴파일 하기
+         * @param gl
+         * @param type
+         * @param source
+         * @returns {WebGLShader}
+         */
+        var buildShader = function(gl, type, source) {
+            var shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
 
-    var paramCount = 0;
+            //log any errors
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(shader));
+            }
+            return shader;
+        };
 
-    for( var key in singleShaderData ){
-        if(key.indexOf('Shader') !== -1){
-            paramCount++;
-            (function(shaderPath){
-                var request = new XMLHttpRequest();
-                request.onreadystatechange = function () {
-                    if (request.readyState === 4) { //if this reqest is done
-                        //add this file to the results object
-                        result[shaderPath] = request.responseText;
-                        paramCount--;
-                        if(paramCount === 0)
-                            onLoaded( result );
-                    }
-                };
-                request.open('GET', singleShaderData[shaderPath], true);
-                request.send();
-            })(key);
-        }
+        /**
+         * 경로상의 쉐이더 파일 읽어서 반환
+         * @param singleShaderData 쉐이더관련 오브젝트
+         *   -------------- 형식 -----------------------
+         *    쉐이더 이름: {
+                            vertexShader: '버텍스 쉐이더 주소',
+                            fragmentShader: '프레그먼트 쉐이더 주소',
+                            attrInfo : 어트리뷰트 배열,
+                            uniInfo : 유니폼 배열
+              },
+         * @param cb
+         */
+        var readShader = function (singleShaderData, cb) {
+            var result = {};
 
-    }
-}
+            var paramCount = 0;
 
-function readObj (objPath, onLoaded) {
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (request.readyState === 4) { //if this reqest is done
-            //add this file to the results object
-            var result = readObjData(request.responseText);
-            onLoaded( result );
-        }
-    };
-    request.open('GET', objPath, true);
-    request.send();
-}
-
-var readObjData = function( objStr ){
-
-    var vertex_temp = [];
-    var texCoord_temp = [];
-    var normal_temp = [];
-    var vertex = [];
-    var normal = [];
-    var indicies = [];
-
-    var hashData = {};
-
-
-    var quadIndex = [0, 1, 2, 0, 2, 3];
-
-
-
-
-
-    var tempArr = objStr.split('\n');
-    var tempArr_t;
-    for( var i = 0; i < tempArr.length ; i++){
-        tempArr_t = tempArr[i].split(' ');
-        if( tempArr_t[0] === 'v'){
-            vertex_temp.push(tempArr_t[2] / 100);
-            vertex_temp.push(tempArr_t[3] / 100);
-            vertex_temp.push(tempArr_t[4] / 100 );
-        }
-        else if( tempArr_t[0] === 'vt'){
-            texCoord_temp.push(tempArr_t[1]);
-            texCoord_temp.push(tempArr_t[2]);
-        }
-        else if( tempArr_t[0] === 'vn'){
-            normal_temp.push(tempArr_t[1]);
-            normal_temp.push(tempArr_t[2]);
-            normal_temp.push(    tempArr_t[3]);
-        }
-        else if( tempArr_t[0] === 'f'){
-
-            for(var j = 0;j < quadIndex.length;j++){
-
-                var triangleIndex = quadIndex[j] + 1;
-
-                var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
-                var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
-
-                var hashKey = (vIndex0 << 16) + nIndex0;
-                var index_temp = -1;
-
-                if (hashData.hasOwnProperty( hashKey )){
-                    indicies.push( hashData[hashKey]);
-                }
-                else{
-                    index_temp = vertex.length / 3;
-                    hashData[ hashKey ] = index_temp;
-                    indicies.push( index_temp );
-                    vertex.push(vertex_temp[vIndex0 * 3 ]);
-                    vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
-                    vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
-                    normal.push(normal_temp[nIndex0 * 3]);
-                    normal.push(normal_temp[nIndex0 * 3 + 1 ]);
-                    normal.push(normal_temp[nIndex0 * 3 + 2 ]);
-
+            for( var key in singleShaderData ){
+                if(key.indexOf('Shader') !== -1){
+                    paramCount++;
+                    (function(shaderPath){
+                        var request = new XMLHttpRequest();
+                        request.onreadystatechange = function () {
+                            if (request.readyState === 4) { //if this reqest is done
+                                //add this file to the results object
+                                result[shaderPath] = request.responseText;
+                                paramCount--;
+                                if(paramCount === 0)
+                                    cb( result );
+                            }
+                        };
+                        request.open('GET', singleShaderData[shaderPath], true);
+                        request.send();
+                    })(key);
                 }
 
             }
+        };
+
+        /**
+         * 버텍스, 프레그먼트 쉐이더를 연결, attribute, uniform 값들 주소 저장
+         * @param shaderObj
+         * @param cb
+         */
+        var createShader =  function( shaderObj,  cb){
+
+            readShader( shaderObj ,
+                function( shaderSource ){
+
+                    var shaderProgram = gl.createProgram();
+                    var vertexShader, fragShader;
+
+
+
+                    if(shaderSource.hasOwnProperty('vertexShader')){
+                        vertexShader = buildShader( gl,gl.VERTEX_SHADER, shaderSource['vertexShader'] );
+                        gl.attachShader(shaderProgram, vertexShader);
+                    }
+
+                    if(shaderSource.hasOwnProperty('fragmentShader')){
+                        fragShader = buildShader( gl,gl.FRAGMENT_SHADER, shaderSource['fragmentShader'] );
+                        gl.attachShader(shaderProgram, fragShader);
+                    }
+
+                    gl.linkProgram(shaderProgram);
+
+                    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                        console.log('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+                        cb( null );
+                        return null;
+                    }
+
+
+                    var singleShaderInfo = {
+                        program: shaderProgram,
+                        attribLocations: { },
+                        uniformLocations: {  },
+                    };
+
+
+                    var i ,locationName;
+                    for( i = 0;i < shaderObj['attrInfo'].length; i++){
+                        locationName = shaderObj['attrInfo'][i];
+                        singleShaderInfo.attribLocations[ locationName ] = gl.getAttribLocation(shaderProgram, locationName);
+                        if(singleShaderInfo.attribLocations[ locationName ] === -1 )
+                            console.warn(locationName ,  " is not used in shader ");
+                    }
+                    for( i = 0;i < shaderObj['uniInfo'].length; i++){
+                        locationName = shaderObj['uniInfo'][i];
+                        singleShaderInfo.uniformLocations[ locationName ] = gl.getUniformLocation(shaderProgram, locationName);
+
+                        if(singleShaderInfo.uniformLocations[ locationName ] === -1 )
+                            console.warn(locationName ,  " is not used in shader ");
+                    }
+
+                    cb( singleShaderInfo );
+                }
+            );
+
+        };
+
+
+
+
+        var shaderInfo = {};
+        var shaderCount = Object.keys(shaderData).length;
+        for( var key in shaderData ){
+
+            (function( shaderName){
+                createShader(shaderData[shaderName],  function( result ){
+                    shaderInfo[ shaderName ] = result;
+                    shaderCount--;
+                    if(shaderCount === 0)
+                        cb(shaderInfo);
+                });
+            })( key);
         }
-    }
 
-    return {
-        vertexs : vertex,
-        normals : normal,
-        indices : indicies,
-    }
-
+    },
 };
 
-function createShader( shaderObj,  cb){
+var Utils = {
 
 
-    readShader( shaderObj ,
-        function( shaderSource ){
+    /**
+     * obj 파일 읽어서 버텍스, 노말, 인덱스 배열 오브젝트 반환
+     * @param objPath
+     * @param cb
+     */
+    readObj : function(objPath, cb) {
+        var     readObjData = function( objStr ){
 
-            var shaderProgram = gl.createProgram();
-            var vertexShader, fragShader;
+
+            //임시로 저장해둘 배열
+            var vertex_temp = [];
+            var texCoord_temp = [];
+            var normal_temp = [];
 
 
+            var vertex = [];
+            var normal = [];
+            var indicies = [];
 
-            if(shaderSource.hasOwnProperty('vertexShader')){
-                vertexShader = buildShader( gl,gl.VERTEX_SHADER, shaderSource['vertexShader'] );
-                gl.attachShader(shaderProgram, vertexShader);
+            var hashData = {};
+
+
+            var quadIndex = [0, 1, 2, 0, 2, 3];
+
+           // var tempArr = objStr.split('\n');
+            var tempArr = Utils.stringSplit( objStr,'\n' );
+            var tempArr_t;
+            for( var i = 0; i < tempArr.length ; i++){
+               // tempArr_t = tempArr[i].split(' ');
+                tempArr_t = Utils.stringSplit( tempArr[i],' ' );
+            //    console.log(tempArr_t);
+                if( tempArr_t[0] === 'v'){
+                    vertex_temp.push(tempArr_t[1] / 100);
+                    vertex_temp.push(tempArr_t[2] / 100);
+                    vertex_temp.push(tempArr_t[3] / 100 );
+                }
+                else if( tempArr_t[0] === 'vt'){
+                    texCoord_temp.push(tempArr_t[1]);
+                    texCoord_temp.push(tempArr_t[2]);
+                }
+                else if( tempArr_t[0] === 'vn'){
+                    normal_temp.push(tempArr_t[1]);
+                    normal_temp.push(tempArr_t[2]);
+                    normal_temp.push(    tempArr_t[3]);
+                }
+                else if( tempArr_t[0] === 'f'){
+
+                    for(var j = 0;j < quadIndex.length;j++){
+
+                        var triangleIndex = quadIndex[j] + 1;
+
+                        var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
+                        var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
+
+                        var hashKey = (vIndex0 << 16) + nIndex0;
+                        var index_temp = -1;
+
+                        if (hashData.hasOwnProperty( hashKey )){
+                            indicies.push( hashData[hashKey]);
+                        }
+                        else{
+                            index_temp = vertex.length / 3;
+                            hashData[ hashKey ] = index_temp;
+                            indicies.push( index_temp );
+                            vertex.push(vertex_temp[vIndex0 * 3 ]);
+                            vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
+                            vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
+                            normal.push(normal_temp[nIndex0 * 3]);
+                            normal.push(normal_temp[nIndex0 * 3 + 1 ]);
+                            normal.push(normal_temp[nIndex0 * 3 + 2 ]);
+
+                        }
+
+                    }
+                }
             }
 
-            if(shaderSource.hasOwnProperty('fragmentShader')){
-                fragShader = buildShader( gl,gl.FRAGMENT_SHADER, shaderSource['fragmentShader'] );
-                gl.attachShader(shaderProgram, fragShader);
+            return {
+                vertexs : vertex,
+                normals : normal,
+                indices : indicies,
             }
 
-            gl.linkProgram(shaderProgram);
+        };
 
-            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-                console.log('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-                cb( null );
-                return null;
+
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState === 4) { //if this reqest is done
+                //add this file to the results object
+                var result = readObjData(request.responseText);
+                cb( result );
             }
+        };
+        request.open('GET', objPath, true);
+        request.send();
+    },
+
+    /**
+     * 백터 크기 반환
+     * @param v
+     * @returns {number}
+     */
+    magnitudeOfVector: function(v) {
+        if(v.length === 3)
+            return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        else if (v.length === 2 )
+            return Math.sqrt(v[0] * v[0] + v[1] * v[1] );
+    },
+
+    /**
+     * 노말라이즈
+     * @param pOut
+     * @param v
+     * @returns {*}
+     */
+    normalize: function(pOut, v){
+        var out = [] || pOut;
+        var inverseMagnitude = 1.0 / this.magnitudeOfVector(v);
+        out[0] = v[0] * inverseMagnitude;
+        out[1] = v[1] * inverseMagnitude;
+        if(v.length >= 2)
+            out[2] = v[2] * inverseMagnitude;
+        return out;
+    },
 
 
-            var singleShaderInfo = {
-                program: shaderProgram,
-                attribLocations: { },
-                uniformLocations: {  },
-            };
-
-
-            var i ,locationName;
-            for( i = 0;i < shaderObj['attrInfo'].length; i++){
-                locationName = shaderObj['attrInfo'][i];
-                singleShaderInfo.attribLocations[ locationName ] = gl.getAttribLocation(shaderProgram, locationName);
-                if(singleShaderInfo.attribLocations[ locationName ] === -1 )
-                    console.warn(locationName ,  " is not used in shader ");
-            }
-            for( i = 0;i < shaderObj['uniInfo'].length; i++){
-                locationName = shaderObj['uniInfo'][i];
-                singleShaderInfo.uniformLocations[ locationName ] = gl.getUniformLocation(shaderProgram, locationName);
-
-                if(singleShaderInfo.uniformLocations[ locationName ] === -1 )
-                    console.warn(locationName ,  " is not used in shader ");
-            }
-
-            cb( singleShaderInfo );
-        }
-    );
-
-
-}
-
-function initShaders(shaderData, cb){
-
-    var shaderInfo = {};
-    var shaderCount = Object.keys(shaderData).length;
-    for( var key in shaderData ){
-
-        (function( shaderName){
-            createShader(shaderData[shaderName],  function( result ){
-                shaderInfo[ shaderName ] = result;
-                shaderCount--;
-                if(shaderCount === 0)
-                    cb(shaderInfo);
-            });
-        })( key);
+    /**
+     * split 하고 빈칸 없에줌
+     * @param string
+     * @param splitKey
+     * @returns {*}
+     */
+    stringSplit : function ( string, splitKey ){
+        var result = string.split(splitKey);
+        result = result.filter( function( value){
+            return value.trim().length !== 0;
+        });
+        return result;
     }
+};
 
-}
-
-
-function magnitudeOfVector(v) {
-    if(v.length === 3)
-        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    else if (v.length === 2 )
-        return Math.sqrt(v[0] * v[0] + v[1] * v[1] );
-}
-
-function normalize(out, v){
-    var inverseMagnitude = 1.0 / magnitudeOfVector(v);
-    out[0] = v[0] * inverseMagnitude;
-    out[1] = v[1] * inverseMagnitude;
-    if(v.length >= 2)
-        out[2] = v[2] * inverseMagnitude;
-    return out;
-}

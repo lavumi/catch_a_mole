@@ -2,18 +2,15 @@ var Light = (function(){
 
     var direction = [];
 
-    var canvas;
 
     var _light = function(){
-        canvas = document.querySelector("#glCanvas");
-        direction = [0,0,0];
-       // canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+       direction = [0,0,0];
     };
+
 
     _light.prototype.setDirection = function(x, y, z){
         direction = [x,y,z];
-
-      normalize(direction, direction);
+        Utils.normalize(direction, direction);
     };
 
     _light.prototype.getDirection = function(){
@@ -22,25 +19,24 @@ var Light = (function(){
     };
 
 
-    var angle = 0;
-    _light.prototype.update = function(dt ){
+    _light.prototype.update = function( dt ){
 
-        var rotPos ;
-        rotPos = [
-            direction[0] * Math.cos(-Math.PI / 180 ) - direction[1] * Math.sin(-Math.PI / 180 ),
-            direction[0] * Math.sin(-Math.PI / 180) + direction[1] * Math.cos(-Math.PI / 180 ),
-            direction[2]
-        ];
-        direction = rotPos;
-        rotPos = [
-            direction[0],
-            direction[1] * Math.cos(-Math.PI / 180) - direction[2] * Math.sin(-Math.PI / 180 ),
-            direction[1] * Math.sin(-Math.PI / 180) + direction[2] * Math.cos(-Math.PI / 180 ),
-
-        ];
-        direction = rotPos;
-
-            normalize(direction, direction);
+        // var rotPos ;
+        // rotPos = [
+        //     direction[0] * Math.cos(-Math.PI / 180 ) - direction[1] * Math.sin(-Math.PI / 180 ),
+        //     direction[0] * Math.sin(-Math.PI / 180) + direction[1] * Math.cos(-Math.PI / 180 ),
+        //     direction[2]
+        // ];
+        // direction = rotPos;
+        // rotPos = [
+        //     direction[0],
+        //     direction[1] * Math.cos(-Math.PI / 180) - direction[2] * Math.sin(-Math.PI / 180 ),
+        //     direction[1] * Math.sin(-Math.PI / 180) + direction[2] * Math.cos(-Math.PI / 180 ),
+        //
+        // ];
+        // direction = rotPos;
+        //
+        // Utils.normalize(direction, direction);
        //
     };
 
@@ -49,9 +45,9 @@ var Light = (function(){
         var position = getMousePosition(event, canvas);
         console.log(position);
         var pos = [position.x, position.y];
-        normalize(pos, pos);
+        Utils.normalize(pos, pos);
         direction = [pos[0], pos[1],1];
-        normalize(direction, direction);
+        Utils.normalize(direction , direction);
     };
 
 

@@ -6,13 +6,13 @@ var Square = (function(){
         color : null,
     };
 
-    var square = function(){
+    var _square = function(){
 
         this.makeBuffer();
 
     };
 
-    square.prototype.makeBuffer = function() {
+    _square.prototype.makeBuffer = function() {
 
         var positions = [
             -1.0,  1.0,
@@ -50,7 +50,7 @@ var Square = (function(){
     };
 
 
-    square.prototype.draw = function( camera, shaderInfo ){
+    _square.prototype.draw = function( camera, shaderInfo ){
 
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.position);
@@ -105,5 +105,5 @@ var Square = (function(){
 
     };
 
-    return square;
+    return _square;
 })();

@@ -18,7 +18,7 @@ var Sphere = (function(){
         indices : null,
     };
 
-    var Sphere = function( detail ){
+    var _sphere = function( detail ){
         worldMatrix = mat4.create();
         if(isNaN(detail) === false)
             recursionLevel = 2;
@@ -64,7 +64,7 @@ var Sphere = (function(){
                 (p1y + p2y) / 2,
                 (p1z + p2z) / 2];
 
-            normalize(pos, pos);
+            Utils.normalize(pos, pos);
             normals = normals.concat(pos);
 
 
@@ -84,7 +84,7 @@ var Sphere = (function(){
 
     var addVertexData = function( data){
         var pos = [];
-        normalize(pos, data);
+        Utils.normalize(pos, data);
         normals = normals.concat(pos);
 
 
@@ -94,7 +94,7 @@ var Sphere = (function(){
         positions = positions.concat(pos);
     };
 
-    Sphere.prototype.makeBuffer = function(){
+    _sphere.prototype.makeBuffer = function(){
 
         var t = (1.0 + Math.sqrt(5.0)) / 2.0;
 
@@ -194,7 +194,7 @@ var Sphere = (function(){
 
 
 
-    Sphere.prototype.draw = function( camera, light, shaderInfo ){
+    _sphere.prototype.draw = function( camera, light, shaderInfo ){
 
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.position);
@@ -268,7 +268,7 @@ var Sphere = (function(){
 
     };
 
-    Sphere.prototype.update = function( dt ){
+    _sphere.prototype.update = function( dt ){
         // mat4.rotate(worldMatrix,  // destination matrix
         //     worldMatrix,  // matrix to rotate
         //     0.01,     // amount to rotate in radians
@@ -285,5 +285,5 @@ var Sphere = (function(){
 
     };
 
-    return Sphere;
+    return _sphere;
 })();

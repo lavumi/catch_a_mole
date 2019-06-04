@@ -9,7 +9,7 @@ var Camera = (function(){
     var viewMatrix = null;
 
 
-    var _camera = function( gl ){
+    var _camera = function(){
 
         fov = 45 * Math.PI / 180;
         aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
@@ -34,9 +34,9 @@ var Camera = (function(){
     };
 
 
+    //캔버스 크기가 변경되면 카메라의 세팅도 변경되어야함
     _camera.prototype.resizeCanvas = function(){
         aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-
         mat4.perspective(projectionMatrix,
             fov,
             aspect,
@@ -51,6 +51,10 @@ var Camera = (function(){
 
     _camera.prototype.GetViewMatrix = function(){
         return viewMatrix;
+    };
+
+    _camera.prototype.update = function( dt ){
+
     };
 
 
