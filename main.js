@@ -13,6 +13,8 @@ var Main = (function (){
     var _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
+
+       // canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         if (gl === null) {
             alert("Unable to initialize WebGL. Your browser or machine may not support it.");
             return;
@@ -24,6 +26,19 @@ var Main = (function (){
             }.bind(this)
         );
     };
+
+    var prevPos = [0,0];
+    _drawMain.prototype.onMouseMove = function(event){
+        var curMousePos = getMousePosition(event, canvas);
+        var moveDelta = [
+            (curMousePos[0] - prevPos[0]) / 10,
+                (curMousePos[1] - prevPos[1]) / 10
+        ];
+
+        camera.addOrbitalMove(moveDelta[0], moveDelta[1] );
+        prevPos = curMousePos;
+    };
+
 
     _drawMain.prototype.start = function(){
 
@@ -56,7 +71,7 @@ var Main = (function (){
 
         tempModel.update( deltaTime );
         directionalLight.update( deltaTime );
-        camera.update( deltaTime );
+        camera.update( deltaTime, deltaTime );
 
 
 

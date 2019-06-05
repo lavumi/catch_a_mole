@@ -152,10 +152,12 @@ var ModelBase = (function(){
         //     worldMatrix,  // matrix to rotate
         //     0.01,     // amount to rotate in radians
         //     [0, 0, 1]);       // axis to rotate around (Z)
-        mat4.rotate(worldMatrix,  // destination matrix
-            worldMatrix,  // matrix to rotate
-            0.01,// amount to rotate in radians
-            [0, -1, 0]);       // axis to rotate around (X)
+
+
+        // mat4.rotate(worldMatrix,  // destination matrix
+        //     worldMatrix,  // matrix to rotate
+        //     0.01,// amount to rotate in radians
+        //     [0, -1, 0]);       // axis to rotate around (X)
 
         // mat4.rotate(worldMatrix,  // destination matrix
         //     worldMatrix,  // matrix to rotate
