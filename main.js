@@ -19,7 +19,7 @@ var Main = (function (){
         canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
         canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        canvas.addEventListener('touchmove', this.onTouchMove.bind(this));
+        canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
         canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
 
@@ -44,8 +44,6 @@ var Main = (function (){
 
     };
 
-
-
     _drawMain.prototype.onMouseMove = function(event){
         if(mouseDown === false )
             return;
@@ -63,25 +61,6 @@ var Main = (function (){
 
         tempModel.rotate(moveDelta[0], moveDelta[1]);
     };
-
-    _drawMain.prototype.onTouchMove = function(event){
-        if(mouseDown === false )
-            return;
-        var curMousePos = getTouchPosition(event, canvas);
-        var moveDelta = [
-            (curMousePos[0] - prevPos[0]) / 50,
-            (curMousePos[1] - prevPos[1]) / 50
-        ];
-        prevPos = curMousePos;
-
-
-        //
-        // camera.addOrbitalMove(moveDelta[0], moveDelta[1] );
-
-
-        tempModel.rotate(moveDelta[0], moveDelta[1]);
-    };
-
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
