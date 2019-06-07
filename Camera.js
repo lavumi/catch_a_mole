@@ -69,7 +69,7 @@ var Camera = (function(){
 
     _camera.prototype.update = function( dt ){
 
-        this.addOrbitalMove( dt, dt, 0);
+      //  this.addOrbitalMove( dt, dt, 0);
     };
 
 
@@ -77,8 +77,8 @@ var Camera = (function(){
         var x, y, z;
 
         dRadius = 0;
-        //orbitalMoveData.theta += dTheta;
-        orbitalMoveData.pie += dPie ;
+        orbitalMoveData.theta += dTheta;
+       // orbitalMoveData.pie += dPie ;
         orbitalMoveData.radius += dRadius;
 
 
@@ -89,20 +89,9 @@ var Camera = (function(){
         z = Math.cos(orbitalMoveData.theta) * orbitalMoveData.radius;
 
 
-        // var out = [0,0,0];
-        // Utils.cross(out, , [x, y, z]);
-        // Utils.cross( out, out, [x, y, z]);
-        // Utils.normalize( out, out);
-
-var upVector = [0,Math.cos( orbitalMoveData.pie ),0];
+        var upVector = [0,Math.cos( orbitalMoveData.pie ),0];
         Utils.normalize( upVector, upVector);
-
-
         mat4.lookAt( viewMatrix, [ x, y, z], [ 0, 0, 0  ], upVector );
-        //
-        // mat4.translate(viewMatrix,     // destination matrix
-        //     viewMatrix,     // matrix to translate
-        //     [x, y, z]);  // amount to translate
 
     };
 

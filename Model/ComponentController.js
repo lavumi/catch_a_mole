@@ -154,16 +154,21 @@ var ModelBase = (function(){
         //     [0, 0, 1]);       // axis to rotate around (Z)
 
 
-        // mat4.rotate(worldMatrix,  // destination matrix
-        //     worldMatrix,  // matrix to rotate
-        //     0.01,// amount to rotate in radians
-        //     [0, -1, 0]);       // axis to rotate around (X)
+       // this.rotate(1, 1);
+
+    };
+
+    model.prototype.rotate = function ( y, x){
+
+        mat4.rotate(worldMatrix,  // destination matrix
+            worldMatrix,  // matrix to rotate
+            0.1 * y,// amount to rotate in radians
+            [0, 1, 0]);       // axis to rotate around (X)
 
         // mat4.rotate(worldMatrix,  // destination matrix
         //     worldMatrix,  // matrix to rotate
         //     0.01,// amount to rotate in radians
         //     [1, 0, 0]);       // axis to rotate around (X)
-
     };
 
     return model;
