@@ -44,6 +44,7 @@ var Main = (function (){
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
 
+
     };
 
     _drawMain.prototype.onMouseMove = function(event){
@@ -56,17 +57,12 @@ var Main = (function (){
         ];
         prevPos = curMousePos;
 
-
-        //
-        // camera.addOrbitalMove(moveDelta[0], moveDelta[1] );
-
-
         tempModel.rotate(moveDelta[0], moveDelta[1]);
     };
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
-
+        tempModel.bounce();
     };
 
 

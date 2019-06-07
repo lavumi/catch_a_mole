@@ -4,12 +4,25 @@ var ModelBase = (function(){
     var GopherBufferData;
     var MaterialData;
     var worldMatrix = null;
+    var baseWorldMatrix = null;
     var readyToDraw = false;
 
 
     var model = function(objPath){
 
        worldMatrix = mat4.create();
+
+
+
+       baseWorldMatrix = mat4.clone( worldMatrix );
+
+
+        mat4.rotate(baseWorldMatrix,  // destination matrix
+            baseWorldMatrix,  // matrix to rotate
+            3.141592 ,// amount to rotate in radians
+            [0, 1, 0]);       // axis to rotate around (X)
+
+       this.bounce();
        Utils.readObj( objPath, function( result){
 
            GopherBufferData = makeBuffer(result);
@@ -148,28 +161,55 @@ var ModelBase = (function(){
     };
 
     model.prototype.update = function( dt ){
-        // mat4.rotate(worldMatrix,  // destination matrix
-        //     worldMatrix,  // matrix to rotate
-        //     0.01,     // amount to rotate in radians
-        //     [0, 0, 1]);       // axis to rotate around (Z)
 
+        if( onBounce === true ){
+             mat4.scale(worldMatrix,
+                 baseWorldMatrix,
+                 [1 + bounceScale  , 1 - bounceScale , 1 +bounceScale]);
 
-       // this.rotate(1, 1);
+             bounceScale -= 0.03;
+
+             console.log(' update boundScale ', 1 - bounceScale);
+        }
+
+        if(bounceScale <= 0){
+            onBounce = false;
+        }
+
 
     };
 
     model.prototype.rotate = function ( y, x){
 
-        mat4.rotate(worldMatrix,  // destination matrix
-            worldMatrix,  // matrix to rotate
+        mat4.rotate(baseWorldMatrix,  // destination matrix
+            baseWorldMatrix,  // matrix to rotate
             0.1 * y,// amount to rotate in radians
             [0, 1, 0]);       // axis to rotate around (X)
 
+        worldMatrix = mat4.clone(baseWorldMatrix);
         // mat4.rotate(worldMatrix,  // destination matrix
         //     worldMatrix,  // matrix to rotate
         //     0.01,// amount to rotate in radians
         //     [1, 0, 0]);       // axis to rotate around (X)
     };
+
+
+
+
+    var onBounce = false;
+    var bounceScale = 0;
+    model.prototype.bounce = function ( force ){
+
+        onBounce = true;
+        bounceScale = 0.3;
+
+       // bounceScale += 0.01 * dt;
+       //  mat4.scale(worldMatrix,
+       //      worldMatrix,
+       //      [1 , 2, 1 ]);
+    };
+
+
 
     return model;
 })();
