@@ -13,6 +13,8 @@ var Main = (function (){
     var _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
+        if ( typeof canvas.requestFullscreen === 'function')
+            canvas.requestFullscreen();
 
         canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         canvas.addEventListener('mousemove', this.onMouseMove.bind(this));

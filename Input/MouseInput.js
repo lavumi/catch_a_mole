@@ -14,9 +14,6 @@ var getMousePosition = function (event, element) {
             event.clientY - boundingRect.top
         ];
     }
-
     return result;
-
-
 };
 
