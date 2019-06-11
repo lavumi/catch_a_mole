@@ -27,7 +27,7 @@ var Renderer = (function (){
         window.addEventListener('resize', resizeCanvas, false);
 
         //화면 클리어 및 기본 클리어 색상 지정하기
-        this.clearScreen( 1, 0.6, 0.2, 1);
+        this.clearScreen( 1, 1, 1, 1);
 
         //쉐이더 데이터 obj 만들기
         var shaders = {

@@ -135,10 +135,14 @@ var ModelBase = (function(){
                     [0, 0, 1]);
 
 
+
+
             mat4.translate(this._worldMatrix,
                 this._worldMatrix,
                 this._worldData.position
                 );
+            console.log( this._worldMatrix );
+            this._worldMatChanged = false;
         }
 
         gl.uniformMatrix4fv(
@@ -208,19 +212,6 @@ var ModelBase = (function(){
 
     model.prototype.update = function( dt ){
 
-        if( onBounce === true ){
-             this.scale(1 + bounceScale, 1 - bounceScale, 1 + bounceScale);
-
-             bounceScale -= 0.03;
-
-             console.log(' update boundScale ', 1 - bounceScale);
-        }
-
-        if(bounceScale <= 0){
-            onBounce = false;
-        }
-
-
     };
 
 
@@ -258,17 +249,8 @@ var ModelBase = (function(){
     };
 
 
-    var onBounce = false;
-    var bounceScale = 0;
     model.prototype.bounce = function ( force ){
 
-        onBounce = true;
-        bounceScale = 0.3;
-
-       // bounceScale += 0.01 * dt;
-       //  mat4.scale(worldMatrix,
-       //      worldMatrix,
-       //      [1 , 2, 1 ]);
     };
 
 

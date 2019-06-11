@@ -78,7 +78,7 @@ var Camera = (function(){
 
         dRadius = 0;
         orbitalMoveData.theta += dTheta;
-       // orbitalMoveData.pie += dPie ;
+        orbitalMoveData.pie += dPie ;
         orbitalMoveData.radius += dRadius;
 
 

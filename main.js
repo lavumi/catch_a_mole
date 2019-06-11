@@ -16,13 +16,13 @@ var Main = (function (){
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
 
-        // canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        // canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        // canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
-        //
-        // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
-        // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
+        canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
+
+        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
+        canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
 
         if (gl === null) {
@@ -56,13 +56,15 @@ var Main = (function (){
                 (curMousePos[1] - prevPos[1]) / 50
         ];
         prevPos = curMousePos;
+        //
+        // tempModel.rotate(moveDelta[0], moveDelta[1]);
 
-        tempModel.rotate(moveDelta[0], moveDelta[1]);
+        camera.addOrbitalMove(moveDelta[0], moveDelta[1], 5 );
     };
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
-        tempModel.bounce();
+       // tempModel.bounce();
     };
 
 
@@ -79,21 +81,34 @@ var Main = (function (){
         renderer.setCamera( camera );
 
 
+
+        var filename = 'Model/gopher_low';
+
+       // var filename = 'Model/hole';
+
         //모델 생성
-        var tempModel = new ModelBase('Model/hole');
-        tempModel.moveTo( 0,-2,0);
+        var tempModel = new ModelBase(filename);
+        tempModel.moveTo( 0,-1,0);
 
         objects.push(tempModel);
 
 
-        var tempModel2 = new ModelBase('Model/hole');
-        tempModel2.moveTo( 0,-2,1);
+        var tempModel2 = new ModelBase(filename);
+        tempModel2.moveTo( 0,-1,-1);
 
         objects.push(tempModel2);
 
+        var tempModel3 = new ModelBase(filename);
+        tempModel3.moveTo( 1,-1,0);
 
-        console.log(objects[0].getWorldData().position);
-        console.log(objects[1].getWorldData().position);
+        objects.push(tempModel3);
+
+        var tempModel4 = new ModelBase(filename);
+        tempModel4.moveTo( -1,-1,0);
+
+        objects.push(tempModel4);
+
+
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));
     };
