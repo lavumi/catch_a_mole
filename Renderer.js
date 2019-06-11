@@ -72,11 +72,16 @@ var Renderer = (function (){
 
     /**
      * 화면 그리는 함수
-     * @param model 추후 배열로 변경해야함. 다른 쉐이더 사용할 경우도 고려할것
+     * @param objects
      */
-    _renderer.prototype.draw = function(model){
+    _renderer.prototype.draw = function(objects){
         this.clearScreen();
-        model.draw( camera,light, shaderData.normalShader );
+
+        for( var i = 0; i < objects.length ; i++){
+            (function(index){
+                objects[index].draw( camera,light, shaderData.normalShader );
+            })(i);
+        }
     };
 
 

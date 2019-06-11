@@ -1,37 +1,52 @@
 var ModelBase = (function(){
 
 
-    var GopherBufferData;
-    var MaterialData;
-    var worldMatrix = null;
-    var baseWorldMatrix = null;
-    var readyToDraw = false;
-
-
-    var model = function(objPath){
-
-       worldMatrix = mat4.create();
 
 
 
-       baseWorldMatrix = mat4.clone( worldMatrix );
+    var model = function(fileName){
+
+        this._bufferData = null;
+        this._materialData = null;
+        this._worldMatrix = null;
+        this._readyToDraw = false;
 
 
-        mat4.rotate(baseWorldMatrix,  // destination matrix
-            baseWorldMatrix,  // matrix to rotate
+        this._worldData = null;
+        this._worldMatChanged = true;
+
+
+        var self = this;
+
+
+
+
+        var objPath = fileName + '.obj';
+        var mtlPath = fileName + '.mtl';
+
+        this._worldMatrix = mat4.create();
+
+        this._worldData = {
+            position : [0,0,0],
+                scale : [1,1,1],
+            rotation : [0,3.141592,0]
+        };
+
+        mat4.rotate(this._worldMatrix,  // destination matrix
+            this._worldMatrix,  // matrix to rotate
             3.141592 ,// amount to rotate in radians
             [0, 1, 0]);       // axis to rotate around (X)
 
-       this.bounce();
-       Utils.readObj( objPath, function( result){
+        this.bounce();
+        Utils.readObj( objPath, function( result){
 
-           GopherBufferData = makeBuffer(result);
-           readyToDraw = true;
-       });
+            self._bufferData = makeBuffer(result);
+            self._readyToDraw = true;
+        });
 
-       Utils.readMtl( 'Model/gopher.mtl', function(result){
-           MaterialData = result;
-       });
+        Utils.readMtl( mtlPath, function(result){
+            self._materialData = result;
+        });
     };
 
 
@@ -74,7 +89,7 @@ var ModelBase = (function(){
 
     model.prototype.draw = function( camera, light, shaderInfo ){
 
-        if(readyToDraw === false)
+        if(this._readyToDraw === false)
             return;
 
 
@@ -94,10 +109,42 @@ var ModelBase = (function(){
             camera.GetViewMatrix());
 
 
+        if(this._worldMatChanged === true ){
+            this._worldMatrix = mat4.create();
+            mat4.scale( this._worldMatrix,
+                this._worldMatrix,
+                this._worldData.scale
+            );
+
+            if(this._worldData.rotation[0] !== 1)
+                mat4.rotate(this._worldMatrix,
+                    this._worldMatrix,
+                    this._worldData.rotation[0],
+                    [1, 0, 0]);
+
+            if(this._worldData.rotation[1] !== 1)
+                mat4.rotate(this._worldMatrix,
+                    this._worldMatrix,
+                    this._worldData.rotation[1],
+                    [0, 1, 0]);
+
+            if(this._worldData.rotation[2] !== 1)
+                mat4.rotate(this._worldMatrix,
+                    this._worldMatrix,
+                    this._worldData.rotation[2],
+                    [0, 0, 1]);
+
+
+            mat4.translate(this._worldMatrix,
+                this._worldMatrix,
+                this._worldData.position
+                );
+        }
+
         gl.uniformMatrix4fv(
             shaderInfo.uniformLocations['uWorldMatrix'],
             false,
-            worldMatrix);
+            this._worldMatrix);
 
 
         gl.uniform3fv(
@@ -110,10 +157,10 @@ var ModelBase = (function(){
 
 
 
-        for(var key in GopherBufferData){
+        for(var key in this._bufferData){
 
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData[key].vertex);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._bufferData[key].vertex);
             gl.vertexAttribPointer(
                 shaderInfo.attribLocations['aVertexPosition'],
                 3, // position x, y, z 3개
@@ -128,7 +175,7 @@ var ModelBase = (function(){
 
 
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, GopherBufferData[key].normal);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._bufferData[key].normal);
             gl.vertexAttribPointer(
                 shaderInfo.attribLocations['aVertexNormal'],
                 3,
@@ -140,19 +187,18 @@ var ModelBase = (function(){
                 shaderInfo.attribLocations['aVertexNormal']);
 
 
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, GopherBufferData[key].index);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._bufferData[key].index);
 
 
             gl.uniform3fv(
                 shaderInfo.uniformLocations['uAmbient'],
-                MaterialData[key]['Ka']);
+                this._materialData[key]['Ka']);
 
             {
-
                 const type = gl.UNSIGNED_SHORT;
                 const offset = 0;
 
-                gl.drawElements(gl.TRIANGLES, GopherBufferData[key].indexCount, type, offset);
+                gl.drawElements(gl.TRIANGLES, this._bufferData[key].indexCount, type, offset);
             }
         }
 
@@ -163,9 +209,7 @@ var ModelBase = (function(){
     model.prototype.update = function( dt ){
 
         if( onBounce === true ){
-             mat4.scale(worldMatrix,
-                 baseWorldMatrix,
-                 [1 + bounceScale  , 1 - bounceScale , 1 +bounceScale]);
+             this.scale(1 + bounceScale, 1 - bounceScale, 1 + bounceScale);
 
              bounceScale -= 0.03;
 
@@ -179,21 +223,39 @@ var ModelBase = (function(){
 
     };
 
-    model.prototype.rotate = function ( y, x){
 
-        mat4.rotate(baseWorldMatrix,  // destination matrix
-            baseWorldMatrix,  // matrix to rotate
-            0.1 * y,// amount to rotate in radians
-            [0, 1, 0]);       // axis to rotate around (X)
-
-        worldMatrix = mat4.clone(baseWorldMatrix);
-        // mat4.rotate(worldMatrix,  // destination matrix
-        //     worldMatrix,  // matrix to rotate
-        //     0.01,// amount to rotate in radians
-        //     [1, 0, 0]);       // axis to rotate around (X)
+    model.prototype.moveTo = function ( x, y, z){
+        this._worldData.position = [x, y, z];
+        this._worldMatChanged = true;
     };
 
+    model.prototype.getWorldData = function(){
+        return this._worldData;
+    };
 
+    model.prototype.rotate = function ( x, y, z){
+
+        this._worldData.rotation[0] += 0.1 * x;
+        this._worldData.rotation[1] += 0.1 * y;
+        this._worldData.rotation[2] += 0.1 * z;
+        this._worldMatChanged = true;
+
+        // mat4.rotate(baseWorldMatrix,  // destination matrix
+        //     baseWorldMatrix,  // matrix to rotate
+        //     0.1 * x,// amount to rotate in radians
+        //     [0, 1, 0]);       // axis to rotate around (X)
+        //
+        // worldMatrix = mat4.clone(baseWorldMatrix);
+        // // mat4.rotate(worldMatrix,  // destination matrix
+        // //     worldMatrix,  // matrix to rotate
+        // //     0.01,// amount to rotate in radians
+        // //     [1, 0, 0]);       // axis to rotate around (X)
+    };
+
+    model.prototype.scale = function( x, y, z ){
+        this._worldData.scale=[ x, y, z];
+        this._worldMatChanged = true;
+    };
 
 
     var onBounce = false;

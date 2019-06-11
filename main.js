@@ -6,7 +6,7 @@ var Main = (function (){
 
     var directionalLight;
     var camera;
-    var tempModel;
+    var objects = [];
     var renderer;
 
 
@@ -16,13 +16,13 @@ var Main = (function (){
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
 
-        canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
-
-        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
-        canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
+        // canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        // canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        // canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
+        //
+        // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
+        // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
 
         if (gl === null) {
@@ -80,9 +80,20 @@ var Main = (function (){
 
 
         //모델 생성
-        tempModel = new ModelBase('Model/gopher.obj');
+        var tempModel = new ModelBase('Model/hole');
+        tempModel.moveTo( 0,-2,0);
+
+        objects.push(tempModel);
 
 
+        var tempModel2 = new ModelBase('Model/hole');
+        tempModel2.moveTo( 0,-2,1);
+
+        objects.push(tempModel2);
+
+
+        console.log(objects[0].getWorldData().position);
+        console.log(objects[1].getWorldData().position);
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));
     };
@@ -95,16 +106,27 @@ var Main = (function (){
         then = now;
 
 
-        tempModel.update( deltaTime );
+        for( var i = 0; i < objects.length ; i++){
+            objects[i].update( deltaTime );
+        }
+
         directionalLight.update( deltaTime );
         camera.update( deltaTime, deltaTime );
 
 
 
-        renderer.draw( tempModel );
+        renderer.draw( objects );
         requestAnimationFrame(this.update.bind(this));
     };
 
 
         return _drawMain;
 })();
+
+
+
+
+
+
+
+
