@@ -91,26 +91,33 @@ var Main = (function (){
        // var filename = 'Model/hole';
 
         //모델 생성
-        var tempModel = new ModelBase(filename);
-        tempModel.moveTo( 0,-1,0);
+        var tempModel;
+        for( var i = 0 ; i < 3 ; i ++){
+            for( var j = 0 ; j< 3 ; j ++){
+                tempModel = new ModelBase(filename);
+                tempModel.moveTo( i * 1.5,-1,j * 1.5);
 
-        objects.push(tempModel);
+                objects.push(tempModel);
+            }
+        }
 
 
-        var tempModel2 = new ModelBase(filename);
-        tempModel2.moveTo( 0,-1,-2);
 
-        objects.push(tempModel2);
-
-        var tempModel3 = new ModelBase(filename);
-        tempModel3.moveTo( 2,-1,0);
-
-        objects.push(tempModel3);
-
-        var tempModel4 = new ModelBase(filename);
-        tempModel4.moveTo( -2,-1,0);
-
-        objects.push(tempModel4);
+        //
+        // var tempModel2 = new ModelBase(filename);
+        // tempModel2.moveTo( 0,-1,-2);
+        //
+        // objects.push(tempModel2);
+        //
+        // var tempModel3 = new ModelBase(filename);
+        // tempModel3.moveTo( 2,-1,0);
+        //
+        // objects.push(tempModel3);
+        //
+        // var tempModel4 = new ModelBase(filename);
+        // tempModel4.moveTo( -2,-1,0);
+        //
+        // objects.push(tempModel4);
 
 
         //업데이트 루프 시작

@@ -38,7 +38,7 @@ var Camera = (function(){
             projectionData.far);
 
 
-        mat4.lookAt( viewMatrix, [ 0,3,-10], [ 0, 0, 0  ], [0,1,0] );
+        mat4.lookAt( viewMatrix, [ 0,7,-7], [ 0, 0, 0  ], [0,1,0] );
 
         // mat4.translate(viewMatrix,     // destination matrix
         //     viewMatrix,     // matrix to translate
