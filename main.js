@@ -92,7 +92,7 @@ var Main = (function (){
 
         //모델 생성
         var tempModel;
-        for( var i = 0 ; i < 3 ; i ++){
+        for( var i = -1 ; i < 2 ; i ++){
             for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
                 tempModel.moveTo( i * 1.5,-1,j * 1.5);
