@@ -20,9 +20,9 @@ var Main = (function (){
         // canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         // canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
         //
-        // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
-        // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
+        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
+        canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
 
         if (gl === null) {
@@ -57,12 +57,12 @@ var Main = (function (){
         ];
         prevPos = curMousePos;
 
-        tempModel.rotate(moveDelta[0], moveDelta[1]);
+        objects[0].rotate( 0, moveDelta[0] , 0);
     };
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
-        tempModel.bounce();
+    //    objects[0].bounce();
     };
 
 
@@ -80,20 +80,20 @@ var Main = (function (){
 
 
         //모델 생성
-        var tempModel = new ModelBase('Model/hole');
-        tempModel.moveTo( 0,-2,0);
+        var tempModel = new ModelBase('Model/gopher_low');
+        //tempModel.moveTo( 0,-2,0);
 
         objects.push(tempModel);
 
 
-        var tempModel2 = new ModelBase('Model/hole');
-        tempModel2.moveTo( 0,-2,1);
+        // var tempModel2 = new ModelBase('Model/hole');
+        // tempModel2.moveTo( 0,-2,1);
+        //
+        // objects.push(tempModel2);
 
-        objects.push(tempModel2);
 
-
-        console.log(objects[0].getWorldData().position);
-        console.log(objects[1].getWorldData().position);
+        // console.log(objects[0].getWorldData().position);
+        // console.log(objects[1].getWorldData().position);
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));
     };
