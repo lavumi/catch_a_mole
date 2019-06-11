@@ -110,38 +110,41 @@ var ModelBase = (function(){
 
 
         if(this._worldMatChanged === true ){
+
+
             this._worldMatrix = mat4.create();
-            mat4.scale( this._worldMatrix,
+
+            mat4.translate(this._worldMatrix,
                 this._worldMatrix,
-                this._worldData.scale
+                this._worldData.position
             );
 
-            if(this._worldData.rotation[0] !== 1)
+
+            if(this._worldData.rotation[0] !== 0)
                 mat4.rotate(this._worldMatrix,
                     this._worldMatrix,
                     this._worldData.rotation[0],
                     [1, 0, 0]);
 
-            if(this._worldData.rotation[1] !== 1)
+            if(this._worldData.rotation[1] !== 0)
                 mat4.rotate(this._worldMatrix,
                     this._worldMatrix,
                     this._worldData.rotation[1],
                     [0, 1, 0]);
 
-            if(this._worldData.rotation[2] !== 1)
+            if(this._worldData.rotation[2] !== 0)
                 mat4.rotate(this._worldMatrix,
                     this._worldMatrix,
                     this._worldData.rotation[2],
                     [0, 0, 1]);
 
-
-
-
-            mat4.translate(this._worldMatrix,
+            mat4.scale( this._worldMatrix,
                 this._worldMatrix,
-                this._worldData.position
-                );
-            console.log( this._worldMatrix );
+                this._worldData.scale
+            );
+
+
+          //  console.log( this._worldMatrix );
             this._worldMatChanged = false;
         }
 
@@ -212,6 +215,7 @@ var ModelBase = (function(){
 
     model.prototype.update = function( dt ){
 
+            _bounceUpdate.call(this);
     };
 
 
@@ -250,6 +254,18 @@ var ModelBase = (function(){
 
 
     model.prototype.bounce = function ( force ){
+        this._bounceScale = 0.3;
+
+
+
+    };
+
+    var _bounceUpdate = function(){
+        if(this._bounceScale >= 0){
+            this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
+            this._worldMatChanged = true;
+            this._bounceScale -= 0.03;
+        }
 
     };
 

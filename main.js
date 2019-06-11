@@ -56,15 +56,19 @@ var Main = (function (){
                 (curMousePos[1] - prevPos[1]) / 50
         ];
         prevPos = curMousePos;
-        //
-        // tempModel.rotate(moveDelta[0], moveDelta[1]);
 
-        camera.addOrbitalMove(moveDelta[0], moveDelta[1], 5 );
+
+        for( var i = 0; i < objects.length;i++)
+            objects[i].rotate(0, moveDelta[0],0);
+
+        //camera.addOrbitalMove(moveDelta[0], moveDelta[1], 5 );
     };
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
-       // tempModel.bounce();
+
+        for( var i = 0; i < objects.length;i++)
+            objects[i].bounce();
     };
 
 
