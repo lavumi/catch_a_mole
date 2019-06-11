@@ -13,9 +13,37 @@ var Main = (function (){
     var _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
+
+        if (gl === null) {
+            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+            return;
+        }
+
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
 
+
+
+        this.initInputEvent();
+
+
+
+
+
+        //렌더러 생성 후 콜백으로  start 진입
+        renderer = new Renderer(function(){
+                this.start();
+            }.bind(this)
+        );
+    };
+
+
+
+
+
+
+    //region [Mouse Event]
+    _drawMain.prototype.initInputEvent = function(){
         canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
@@ -24,17 +52,6 @@ var Main = (function (){
         canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
         canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
-
-        if (gl === null) {
-            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
-            return;
-        }
-
-        //렌더러 생성 후 콜백으로  start 진입
-        renderer = new Renderer(function(){
-                this.start();
-            }.bind(this)
-        );
     };
 
 
@@ -72,12 +89,14 @@ var Main = (function (){
     };
 
 
+    //endregion
+
     _drawMain.prototype.start = function(){
 
         //라이트 세팅
 
         directionalLight = new Light();
-        directionalLight.setDirection( 1.0, 0.0, 0.0);
+        directionalLight.setDirection( 1.0, 1.0, 0.0);
         renderer.setLight( directionalLight );
 
         //카메라 세팅

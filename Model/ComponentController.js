@@ -159,11 +159,6 @@ var ModelBase = (function(){
             light.getDirection());
 
 
-
-
-
-
-
         for(var key in this._bufferData){
 
 

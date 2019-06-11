@@ -20,7 +20,7 @@ void main() {
     gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix *  aVertexPosition;
   //  vec4 light = vec4( uDirectionalLight.x, uDirectionalLight.y, uDirectionalLight.z, 1);
 
-    vec4 worldNormal =  aVertexNormal;
+    vec4 worldNormal = uWorldMatrix * aVertexNormal;
 
     vec4 ambient = vec4(uAmbient,1);
 
