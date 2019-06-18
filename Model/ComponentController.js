@@ -1,25 +1,29 @@
 var ModelBase = (function(){
 
 
-
-
-
     var model = function(fileName){
 
         this._bufferData = null;
         this._materialData = null;
         this._worldMatrix = null;
+
+
         this._readyToDraw = false;
-
-
         this._worldData = null;
         this._worldMatChanged = true;
 
 
+        /**
+         * 0 : minX,
+         * 1 : maxX,
+         * 2 : minY,
+         * 3 : maxY,
+         * 4 : minZ,
+         * 5 : maxZ
+         */
+        this._aabbData = [0,0,0,0,0,0];
+
         var self = this;
-
-
-
 
         var objPath = fileName + '.obj';
         var mtlPath = fileName + '.mtl';
@@ -40,8 +44,13 @@ var ModelBase = (function(){
         this.bounce();
         Utils.readObj( objPath, function( result){
 
-            self._bufferData = makeBuffer(result);
+
+            self._aabbData = result.aabbData;
+            self._bufferData = _makeBuffer(result);
             self._readyToDraw = true;
+
+
+            console.log(  self._aabbData );
         });
 
         Utils.readMtl( mtlPath, function(result){
@@ -49,12 +58,14 @@ var ModelBase = (function(){
         });
     };
 
-
-    var makeBuffer = function(dataObj){
+    var _makeBuffer = function(dataObj){
 
         var resultObj = {};
 
         for(var key in dataObj){
+
+            if(key === 'aabbData')
+                continue;
 
             var singleData = dataObj[key];
             var vertexBuffer = gl.createBuffer();
@@ -85,6 +96,15 @@ var ModelBase = (function(){
         }
 
         return resultObj;
+    };
+
+    var _bounceUpdate = function(){
+        if(this._bounceScale >= 0){
+            this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
+            this._worldMatChanged = true;
+            this._bounceScale -= 0.03;
+        }
+
     };
 
     model.prototype.draw = function( camera, light, shaderInfo ){
@@ -213,7 +233,6 @@ var ModelBase = (function(){
             _bounceUpdate.call(this);
     };
 
-
     model.prototype.moveTo = function ( x, y, z){
         this._worldData.position = [x, y, z];
         this._worldMatChanged = true;
@@ -247,7 +266,6 @@ var ModelBase = (function(){
         this._worldMatChanged = true;
     };
 
-
     model.prototype.bounce = function ( force ){
         this._bounceScale = 0.3;
 
@@ -255,14 +273,6 @@ var ModelBase = (function(){
 
     };
 
-    var _bounceUpdate = function(){
-        if(this._bounceScale >= 0){
-            this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
-            this._worldMatChanged = true;
-            this._bounceScale -= 0.03;
-        }
-
-    };
 
 
 

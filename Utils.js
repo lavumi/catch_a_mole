@@ -165,16 +165,14 @@ var Utils = {
             var normal_temp = [];
 
 
-            // var vertex = [];
-            // var normal = [];
-            // var indicies = [];
-
-
             var resultObj = {};
             var targetMaterial = null;
 
             var hashData = {};
             var targetMaterialHashData = null;
+
+
+            var aabbData = [0,0,0,0,0,0];
 
 
             var quadIndex = [0, 1, 2, 0, 2, 3];
@@ -190,6 +188,25 @@ var Utils = {
                     vertex_temp.push(tempArr_t[1] / 100);
                     vertex_temp.push(tempArr_t[2] / 100);
                     vertex_temp.push(tempArr_t[3] / 100 );
+
+
+                    if( tempArr_t[1] < aabbData[0] )
+                        aabbData[0] = tempArr_t[1];
+                    else if ( tempArr_t[1] > aabbData[1]){
+                        aabbData[1] = tempArr_t[1];
+                    }
+
+                    if( tempArr_t[2] < aabbData[2] )
+                        aabbData[2] = tempArr_t[2];
+                    else if ( tempArr_t[2] > aabbData[3]){
+                        aabbData[3] = tempArr_t[2];
+                    }
+
+                    if( tempArr_t[3] < aabbData[4] )
+                        aabbData[4] = tempArr_t[3];
+                    else if ( tempArr_t[3] > aabbData[5]){
+                        aabbData[5] = tempArr_t[3];
+                    }
                 }
                 else if( tempArr_t[0] === 'vt'){
                     texCoord_temp.push(tempArr_t[1]);
@@ -247,6 +264,8 @@ var Utils = {
                     targetMaterialHashData = hashData[ tempArr_t[1] ];
                 }
             }
+
+            resultObj.aabbData = aabbData;
             return resultObj;
 
         };

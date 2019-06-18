@@ -13,6 +13,7 @@ var Main = (function (){
     var _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
+        console.log(gl);
 
         if (gl === null) {
             alert("Unable to initialize WebGL. Your browser or machine may not support it.");
@@ -21,8 +22,6 @@ var Main = (function (){
 
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
-
-
 
         this.initInputEvent();
 
@@ -48,19 +47,20 @@ var Main = (function (){
         canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
-        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
-        canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
-
+        // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
+        // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
     };
 
 
     var mouseDown = false;
     var prevPos = [0,0];
     _drawMain.prototype.onMouseDown = function(){
+        console.log('mouseDown called');
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
-
+        for( var i = 0; i < objects.length;i++)
+            objects[i].bounce();
 
     };
 
@@ -83,9 +83,8 @@ var Main = (function (){
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
+        console.log('onMouseDUp called');
 
-        for( var i = 0; i < objects.length;i++)
-            objects[i].bounce();
     };
 
 
@@ -117,6 +116,8 @@ var Main = (function (){
                 tempModel.moveTo( i * 1.5,-1,j * 1.5);
 
                 objects.push(tempModel);
+
+
             }
         }
 

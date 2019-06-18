@@ -18,6 +18,9 @@ var testObject = (function(){
         return this._data;
     };
 
+    _object.prototype.getClosureData = function(){
+        return _data;
+    };
 
 return _object;
 })();
@@ -31,15 +34,11 @@ var MainTest = (function(){
 
         var obj2 = new testObject();
 
-
         obj2.setData();
-
 
         console.log( obj1.getData());
 
-
         console.log( obj1, obj2);
-
     };
 
     return _testMain;
