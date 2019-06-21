@@ -69,7 +69,7 @@ var Camera = (function(){
 
     _camera.prototype.update = function( dt ){
 
-      //  this.addOrbitalMove( dt, dt, 0);
+       // this.addOrbitalMove( dt,  0);
     };
 
 
@@ -92,6 +92,43 @@ var Camera = (function(){
         var upVector = [0,Math.cos( orbitalMoveData.pie ),0];
         Utils.normalize( upVector, upVector);
         mat4.lookAt( viewMatrix, [ x, y, z], [ 0, 0, 0  ], upVector );
+
+    };
+
+    _camera.prototype.getTouchPointRay = function( screenPoint ){
+        var screenPosX = screenPoint[0];
+        var screenPosY = screenPoint[1];
+
+
+
+
+        var point = {x : 0, y : 0};
+        point.x = ((2.0 * screenPosX) / canvas.width) - 1.0;
+        point.y = (((2.0 * screenPosY) / canvas.height) - 1.0) ;
+
+        point.x = point.x / projectionMatrix[0];
+        point.y = point.y / projectionMatrix[5];
+
+
+        var invView;
+        invView = mat4.create();
+        mat4.invert(invView, viewMatrix);
+
+        var dir = [0,0,0];
+        dir[0] = (point.x * invView[0]) + (point.y * invView[4]) + invView[8];
+        dir[1] = (point.x * invView[1]) + (point.y * invView[5]) + invView[9];
+        dir[2] = (point.x * invView[2]) + (point.y * invView[6]) + invView[10];
+
+        dir[0] *= -1;
+        dir[1] *= -1;
+
+        Utils.normalize( dir, dir);
+
+
+        return {
+            origin : [ 0,4,-11],
+            direction : dir,
+        }
 
     };
 

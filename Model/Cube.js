@@ -9,9 +9,16 @@ var Cube = (function(){
         indices : null,
     };
 
-    var _cube = function(){
+    var _cube = function( aabb){
         worldMatrix = mat4.create();
 
+
+        if(!!aabb === true){
+            this.aabb = aabb;
+        }
+
+        console.log( aabb );
+        
 
         this.makeBuffer();
 
@@ -19,46 +26,53 @@ var Cube = (function(){
 
     _cube.prototype.makeBuffer = function() {
 
+        var minX = this.aabb[0];
+        var minY = this.aabb[2];
+        var minZ = this.aabb[4];
+        var maxX = this.aabb[1];
+        var maxY = this.aabb[3];
+        var maxZ = this.aabb[5];
+
         const positions = [
-            // Front face
-            -1.0, -1.0,  1.0,
-            1.0, -1.0,  1.0,
-            1.0,  1.0,  1.0,
-            -1.0,  1.0,  1.0,
+          //  Front face
+          //   minX, minY, maxZ,
+          //   maxX, minY, maxZ,
+          //   maxX, maxY, maxZ,
+         //   minX, maxY, maxZ,
 
-            // Back face
-            -1.0, -1.0, -1.0,
-            -1.0,  1.0, -1.0,
-            1.0,  1.0, -1.0,
-            1.0, -1.0, -1.0,
-
-            // Top face
-            -1.0,  1.0, -1.0,
-            -1.0,  1.0,  1.0,
-            1.0,  1.0,  1.0,
-            1.0,  1.0, -1.0,
-
-            // Bottom face
-            -1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0,  1.0,
-            -1.0, -1.0,  1.0,
-
-            // Right face
-            1.0, -1.0, -1.0,
-            1.0,  1.0, -1.0,
-            1.0,  1.0,  1.0,
-            1.0, -1.0,  1.0,
-
-            // Left face
-            -1.0, -1.0, -1.0,
-            -1.0, -1.0,  1.0,
-            -1.0,  1.0,  1.0,
-            -1.0,  1.0, -1.0,
+            // // Back face
+            minX, minY, minZ,
+            minX, maxY, minZ,
+            maxX, maxY, minZ,
+            // maxX, minY, minZ,
+            //
+            // // Top face
+            // minX, maxY, minZ,
+            // minX, maxY, maxZ,
+            // maxX, maxY, maxZ,
+            // maxX, maxY, minZ,
+            //
+            // // Bottom face
+            // minX, minY, minZ,
+            // maxX, minY, minZ,
+            // maxX, minY, maxZ,
+            // minX, minY, maxZ,
+            //
+            // // Right face
+            // maxX, minY, minZ,
+            // maxX, maxY, minZ,
+            // maxX, maxY, maxZ,
+            // maxX, minY, maxZ,
+            //
+            // // Left face
+            // minX, minY, minZ,
+            // minX, minY, maxZ,
+            // minX, maxY, maxZ,
+            // minX, maxY, minZ,
         ];
 
 
-        vertexCount = 36;
+        vertexCount = 3;
 
 
         const faceColors = [
@@ -110,7 +124,8 @@ var Cube = (function(){
 
     };
 
-    _cube.prototype.draw = function( camera, shaderInfo ){
+    _cube.prototype.draw = function( camera, light, shaderInfo ){
+
 
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.position);
@@ -179,19 +194,19 @@ var Cube = (function(){
 
 
     _cube.prototype.update = function( dt ){
-        mat4.rotate(worldMatrix,  // destination matrix
-            worldMatrix,  // matrix to rotate
-            0.03,     // amount to rotate in radians
-            [0, 0, 1]);       // axis to rotate around (Z)
-        mat4.rotate(worldMatrix,  // destination matrix
-            worldMatrix,  // matrix to rotate
-            0.02,// amount to rotate in radians
-            [0, 1, 0]);       // axis to rotate around (X)
-
-        mat4.rotate(worldMatrix,  // destination matrix
-            worldMatrix,  // matrix to rotate
-            0.05,// amount to rotate in radians
-            [1, 0, 0]);       // axis to rotate around (X)
+        // mat4.rotate(worldMatrix,  // destination matrix
+        //     worldMatrix,  // matrix to rotate
+        //     0.03,     // amount to rotate in radians
+        //     [0, 0, 1]);       // axis to rotate around (Z)
+        // mat4.rotate(worldMatrix,  // destination matrix
+        //     worldMatrix,  // matrix to rotate
+        //     0.02,// amount to rotate in radians
+        //     [0, 1, 0]);       // axis to rotate around (X)
+        //
+        // mat4.rotate(worldMatrix,  // destination matrix
+        //     worldMatrix,  // matrix to rotate
+        //     0.05,// amount to rotate in radians
+        //     [1, 0, 0]);       // axis to rotate around (X)
 
     };
     return _cube;

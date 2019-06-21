@@ -44,8 +44,8 @@ var Main = (function (){
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
         canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
+      //  canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+     //   canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
         // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
         // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
@@ -55,12 +55,19 @@ var Main = (function (){
 
     var mouseDown = false;
     var prevPos = [0,0];
+    var tempObj;
     _drawMain.prototype.onMouseDown = function(){
         console.log('mouseDown called');
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
-        for( var i = 0; i < objects.length;i++)
-            objects[i].bounce();
+
+        var rayObj = camera.getTouchPointRay(prevPos);
+
+        objects[0].checkRayCollision( rayObj );
+
+        tempObj = new Cube( objects[0].getAABB());
+
+        objects.push(tempObj);
 
     };
 
@@ -110,10 +117,9 @@ var Main = (function (){
 
         //모델 생성
         var tempModel;
-        for( var i = -1 ; i < 2 ; i ++){
-            for( var j = 0 ; j< 3 ; j ++){
+        for( var i = -1 ; i < 0 ; i ++){
+            for( var j = 0 ; j< 1 ; j ++){
                 tempModel = new ModelBase(filename);
-                tempModel.moveTo( i * 1.5,-1,j * 1.5);
 
                 objects.push(tempModel);
 

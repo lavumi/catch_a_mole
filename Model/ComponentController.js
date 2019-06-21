@@ -48,9 +48,6 @@ var ModelBase = (function(){
             self._aabbData = result.aabbData;
             self._bufferData = _makeBuffer(result);
             self._readyToDraw = true;
-
-
-            console.log(  self._aabbData );
         });
 
         Utils.readMtl( mtlPath, function(result){
@@ -273,7 +270,34 @@ var ModelBase = (function(){
 
     };
 
+    model.prototype.checkRayCollision = function ( rayData ){
 
+        var minX = this._aabbData[0];
+        var minY = this._aabbData[2];
+        var minZ = this._aabbData[4];
+        var maxX = this._aabbData[1];
+        var maxY = this._aabbData[3];
+        var maxZ = this._aabbData[5];
+
+
+
+        var triangleFront = [
+            [minX, minY, minZ],
+            [minX, maxY, minZ],
+            [maxX, maxY, minZ]
+        ];
+
+        console.log(triangleFront);
+
+        Utils.intersectRayTriangle( rayData , triangleFront );
+
+
+
+    };
+
+    model.prototype.getAABB = function(){
+        return this._aabbData
+    };
 
 
     return model;

@@ -172,7 +172,7 @@ var Utils = {
             var targetMaterialHashData = null;
 
 
-            var aabbData = [0,0,0,0,0,0];
+            var aabbData = [999,-999,999,-999,999,-999];
 
 
             var quadIndex = [0, 1, 2, 0, 2, 3];
@@ -185,27 +185,39 @@ var Utils = {
                 tempArr_t = Utils.stringSplit( tempArr[i],' ' );
             //    console.log(tempArr_t);
                 if( tempArr_t[0] === 'v'){
-                    vertex_temp.push(tempArr_t[1] / 100);
-                    vertex_temp.push(tempArr_t[2] / 100);
-                    vertex_temp.push(tempArr_t[3] / 100 );
+
+                    tempArr_t[1] /=100;
+                    tempArr_t[2] /=100;
+                    tempArr_t[3] /=100;
+
+                    vertex_temp.push(tempArr_t[1] );
+                    vertex_temp.push(tempArr_t[2] );
+                    vertex_temp.push(tempArr_t[3] );
 
 
-                    if( tempArr_t[1] < aabbData[0] )
+                    if( tempArr_t[1] - aabbData[0] < 0){
                         aabbData[0] = tempArr_t[1];
-                    else if ( tempArr_t[1] > aabbData[1]){
+                    }
+                    else if ( tempArr_t[1] - aabbData[1] > 0){
                         aabbData[1] = tempArr_t[1];
                     }
 
-                    if( tempArr_t[2] < aabbData[2] )
+                    if( tempArr_t[2] - aabbData[2] < 0){
                         aabbData[2] = tempArr_t[2];
-                    else if ( tempArr_t[2] > aabbData[3]){
+
+                    }
+                    else if ( tempArr_t[2] - aabbData[3] > 0){
                         aabbData[3] = tempArr_t[2];
+
                     }
 
-                    if( tempArr_t[3] < aabbData[4] )
+                    if( tempArr_t[3] - aabbData[4] < 0){
                         aabbData[4] = tempArr_t[3];
-                    else if ( tempArr_t[3] > aabbData[5]){
+
+                    }
+                    else if ( tempArr_t[3] - aabbData[5] > 0){
                         aabbData[5] = tempArr_t[3];
+
                     }
                 }
                 else if( tempArr_t[0] === 'vt'){
@@ -265,6 +277,7 @@ var Utils = {
                 }
             }
 
+            console.log( aabbData );
             resultObj.aabbData = aabbData;
             return resultObj;
 
@@ -386,6 +399,59 @@ var Utils = {
         out[1] = az * bx - ax * bz;
         out[2] = ax * by - ay * bx;
         return out;
-    }
+    },
+
+    dot : function( a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    },
+
+    vectorAdd : function(a, b){
+        return [a[0] + b[0] , a[1] + b[1] , a[2] + b[2]];
+    },
+
+
+    getPluckerCoord : function( a, b ){
+        var cross = [];
+
+        this.normalize( a, a);
+        this.normalize( b, b);
+        this.cross(cross, a, b);
+        return {
+            d : [a[0] - b[0],a[1] - b[1],a[2] - b[2]],
+            m : cross
+        }
+    },
+
+    getPluckerSide : function( a, b ){
+
+        return this.dot(a.m, b.d) + this.dot(a.d , b.m);
+    },
+
+
+    // 참고 : https://en.wikipedia.org/wiki/Pl%C3%BCcker_coordinates
+    intersectRayTriangle : function( rayData, triangle ){
+        var origin = rayData.origin ;
+        var dir = rayData.direction;
+
+        console.log( dir);
+
+        var rayPluckerData = this.getPluckerCoord(origin, this.vectorAdd(origin , dir) );
+
+        var trianglePluckerData1 = this.getPluckerCoord(triangle[0], triangle[1] );
+        var trianglePluckerData2 = this.getPluckerCoord(triangle[1], triangle[2] );
+        var trianglePluckerData3 = this.getPluckerCoord(triangle[2], triangle[0] );
+        console.log(' intersectRayTriangle  ', trianglePluckerData1);
+        console.log(' intersectRayTriangle  ', trianglePluckerData2);
+        console.log(' intersectRayTriangle  ', trianglePluckerData3);
+        var side1 = this.getPluckerSide(rayPluckerData, trianglePluckerData1);
+        var side2 = this.getPluckerSide(rayPluckerData, trianglePluckerData2);
+        var side3 = this.getPluckerSide(rayPluckerData, trianglePluckerData3);
+
+        console.log(side1);
+        console.log(side2);
+        console.log(side3);
+
+    },
+
 };
 
