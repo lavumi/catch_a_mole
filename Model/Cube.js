@@ -1,23 +1,22 @@
 var Cube = (function(){
 
     var vertexCount = 0;
-    var worldMatrix = null;
 
-    var buffer = {
-        position: null,
-        color : null,
-        indices : null,
-    };
+
+    var buffer = null;
 
     var _cube = function( aabb){
-        worldMatrix = mat4.create();
+       this.worldMatrix = mat4.create();
 
 
         if(!!aabb === true){
             this.aabb = aabb;
         }
+        else{
+            this.aabb = [0,0.1,0,0.1,0,0.1];
+        }
 
-        console.log( aabb );
+    //    console.log( aabb );
         
 
         this.makeBuffer();
@@ -25,6 +24,15 @@ var Cube = (function(){
     };
 
     _cube.prototype.makeBuffer = function() {
+
+        if( buffer !== null )
+            return;
+
+        buffer =  {
+            position: null,
+            color : null,
+            indices : null,
+        };
 
         var minX = this.aabb[0];
         var minY = this.aabb[2];
@@ -35,44 +43,44 @@ var Cube = (function(){
 
         const positions = [
           //  Front face
-          //   minX, minY, maxZ,
-          //   maxX, minY, maxZ,
-          //   maxX, maxY, maxZ,
-         //   minX, maxY, maxZ,
+            minX, minY, maxZ,
+            maxX, minY, maxZ,
+            maxX, maxY, maxZ,
+           minX, maxY, maxZ,
 
             // // Back face
             minX, minY, minZ,
             minX, maxY, minZ,
             maxX, maxY, minZ,
-            // maxX, minY, minZ,
-            //
-            // // Top face
-            // minX, maxY, minZ,
-            // minX, maxY, maxZ,
-            // maxX, maxY, maxZ,
-            // maxX, maxY, minZ,
-            //
-            // // Bottom face
-            // minX, minY, minZ,
-            // maxX, minY, minZ,
-            // maxX, minY, maxZ,
-            // minX, minY, maxZ,
-            //
-            // // Right face
-            // maxX, minY, minZ,
-            // maxX, maxY, minZ,
-            // maxX, maxY, maxZ,
-            // maxX, minY, maxZ,
-            //
-            // // Left face
-            // minX, minY, minZ,
-            // minX, minY, maxZ,
-            // minX, maxY, maxZ,
-            // minX, maxY, minZ,
+            maxX, minY, minZ,
+            
+            // Top face
+            minX, maxY, minZ,
+            minX, maxY, maxZ,
+            maxX, maxY, maxZ,
+            maxX, maxY, minZ,
+            
+            // Bottom face
+            minX, minY, minZ,
+            maxX, minY, minZ,
+            maxX, minY, maxZ,
+            minX, minY, maxZ,
+            
+            // Right face
+            maxX, minY, minZ,
+            maxX, maxY, minZ,
+            maxX, maxY, maxZ,
+            maxX, minY, maxZ,
+            
+            // Left face
+            minX, minY, minZ,
+            minX, minY, maxZ,
+            minX, maxY, maxZ,
+            minX, maxY, minZ,
         ];
 
 
-        vertexCount = 3;
+        vertexCount =36;
 
 
         const faceColors = [
@@ -125,8 +133,6 @@ var Cube = (function(){
     };
 
     _cube.prototype.draw = function( camera, light, shaderInfo ){
-
-
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.position);
         gl.vertexAttribPointer(
@@ -181,7 +187,7 @@ var Cube = (function(){
         gl.uniformMatrix4fv(
             shaderInfo.uniformLocations['uWorldMatrix'],
             false,
-            worldMatrix);
+            this.worldMatrix);
 
         {
 
@@ -190,6 +196,13 @@ var Cube = (function(){
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         }
 
+    };
+
+    _cube.prototype.moveTo = function ( x, y, z){
+        mat4.translate(this.worldMatrix,
+            this.worldMatrix,
+            [x, y, z]
+        );
     };
 
 
