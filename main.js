@@ -57,17 +57,37 @@ var Main = (function (){
     var prevPos = [0,0];
     var tempObj;
     _drawMain.prototype.onMouseDown = function(){
-        console.log('mouseDown called');
+
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
 
         var rayObj = camera.getTouchPointRay(prevPos);
 
-        objects[0].checkRayCollision( rayObj );
+        for(var i = 0;i < objects.length;i++ ){
+            console.log(objects[i].getAABB() );
+            objects[i].checkRayCollision( rayObj );
+        }
 
-        tempObj = new Cube( objects[0].getAABB());
 
-        objects.push(tempObj);
+        // tempObj = new Cube( objects[0].getAABB());
+        // objects.push(tempObj);
+
+
+        // console.log( rayObj.direction );
+        // for(var i = 0;i < 13 ; i++){
+        //     tempObj = new Cube();
+        //     tempObj.moveTo(
+        //         rayObj.origin[0] + rayObj.direction[0] * i,
+        //         rayObj.origin[1] + rayObj.direction[1] * i,
+        //         rayObj.origin[2] + rayObj.direction[2] * i   
+        //     );
+        //     console.log(                rayObj.origin[0] + rayObj.direction[0] * i,
+        //         rayObj.origin[1] + rayObj.direction[1] * i,
+        //         rayObj.origin[2] + rayObj.direction[2] * i);
+        //     objects.push(tempObj);
+        // }
+
+
 
     };
 
@@ -117,34 +137,16 @@ var Main = (function (){
 
         //모델 생성
         var tempModel;
-        for( var i = -1 ; i < 0 ; i ++){
-            for( var j = 0 ; j< 1 ; j ++){
+        for( var i = -1 ; i < 2 ; i ++){
+            for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
+                tempModel.moveTo( i * 2, j , j * 1.5  );
 
                 objects.push(tempModel);
 
 
             }
         }
-
-
-
-        //
-        // var tempModel2 = new ModelBase(filename);
-        // tempModel2.moveTo( 0,-1,-2);
-        //
-        // objects.push(tempModel2);
-        //
-        // var tempModel3 = new ModelBase(filename);
-        // tempModel3.moveTo( 2,-1,0);
-        //
-        // objects.push(tempModel3);
-        //
-        // var tempModel4 = new ModelBase(filename);
-        // tempModel4.moveTo( -2,-1,0);
-        //
-        // objects.push(tempModel4);
-
 
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));

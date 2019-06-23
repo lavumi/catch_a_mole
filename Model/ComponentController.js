@@ -22,6 +22,7 @@ var ModelBase = (function(){
          * 5 : maxZ
          */
         this._aabbData = [0,0,0,0,0,0];
+        this._baseAABB = [0,0,0,0,0,0];
 
         var self = this;
 
@@ -45,7 +46,8 @@ var ModelBase = (function(){
         Utils.readObj( objPath, function( result){
 
 
-            self._aabbData = result.aabbData;
+            self._baseAABB = result.aabbData;
+        
             self._bufferData = _makeBuffer(result);
             self._readyToDraw = true;
         });
@@ -161,7 +163,15 @@ var ModelBase = (function(){
             );
 
 
-          //  console.log( this._worldMatrix );
+
+            this._aabbData[0] = this._baseAABB[0] + this._worldData.position[0];
+            this._aabbData[1] = this._baseAABB[1] + this._worldData.position[0];
+            this._aabbData[2] = this._baseAABB[2] + this._worldData.position[1];
+            this._aabbData[3] = this._baseAABB[3] + this._worldData.position[1];
+            this._aabbData[4] = this._baseAABB[4] + this._worldData.position[2];
+            this._aabbData[5] = this._baseAABB[5] + this._worldData.position[2];
+
+
             this._worldMatChanged = false;
         }
 
@@ -233,6 +243,8 @@ var ModelBase = (function(){
     model.prototype.moveTo = function ( x, y, z){
         this._worldData.position = [x, y, z];
         this._worldMatChanged = true;
+
+
     };
 
     model.prototype.getWorldData = function(){
@@ -265,9 +277,6 @@ var ModelBase = (function(){
 
     model.prototype.bounce = function ( force ){
         this._bounceScale = 0.3;
-
-
-
     };
 
     model.prototype.checkRayCollision = function ( rayData ){
@@ -279,20 +288,21 @@ var ModelBase = (function(){
         var maxY = this._aabbData[3];
         var maxZ = this._aabbData[5];
 
+        console.log(this._aabbData );
 
-
-        var triangleFront = [
+        var Front = [
             [minX, minY, minZ],
             [minX, maxY, minZ],
-            [maxX, maxY, minZ]
+            [maxX, maxY, minZ],
+            [maxX, minY, minZ]
         ];
 
-        console.log(triangleFront);
 
-        Utils.intersectRayTriangle( rayData , triangleFront );
+        var result =  Utils.intersectRayTriangle( rayData , Front );
 
-
-
+        if(result === true ){
+            this.bounce();
+        }
     };
 
     model.prototype.getAABB = function(){

@@ -277,7 +277,6 @@ var Utils = {
                 }
             }
 
-            console.log( aabbData );
             resultObj.aabbData = aabbData;
             return resultObj;
 
@@ -410,6 +409,12 @@ var Utils = {
     },
 
 
+
+
+
+    /* Plucker coordinate 를 사용한 ray, plane 충돌 체크*/
+    // 참고 : https://en.wikipedia.org/wiki/Pl%C3%BCcker_coordinates
+
     getPluckerCoord : function( a, b ){
         var cross = [];
 
@@ -427,29 +432,36 @@ var Utils = {
         return this.dot(a.m, b.d) + this.dot(a.d , b.m);
     },
 
-
-    // 참고 : https://en.wikipedia.org/wiki/Pl%C3%BCcker_coordinates
     intersectRayTriangle : function( rayData, triangle ){
         var origin = rayData.origin ;
         var dir = rayData.direction;
 
-        console.log( dir);
-
         var rayPluckerData = this.getPluckerCoord(origin, this.vectorAdd(origin , dir) );
 
-        var trianglePluckerData1 = this.getPluckerCoord(triangle[0], triangle[1] );
-        var trianglePluckerData2 = this.getPluckerCoord(triangle[1], triangle[2] );
-        var trianglePluckerData3 = this.getPluckerCoord(triangle[2], triangle[0] );
-        console.log(' intersectRayTriangle  ', trianglePluckerData1);
-        console.log(' intersectRayTriangle  ', trianglePluckerData2);
-        console.log(' intersectRayTriangle  ', trianglePluckerData3);
-        var side1 = this.getPluckerSide(rayPluckerData, trianglePluckerData1);
-        var side2 = this.getPluckerSide(rayPluckerData, trianglePluckerData2);
-        var side3 = this.getPluckerSide(rayPluckerData, trianglePluckerData3);
 
-        console.log(side1);
-        console.log(side2);
-        console.log(side3);
+        var trianglePluckerData = null;
+        var pluckerSide = null;
+        var prevSideData = null;
+        for(var i = 0;i < triangle.length;i++){
+            if( i != triangle.length -1 ){
+                trianglePluckerData = this.getPluckerCoord(triangle[i], triangle[i+1] ); 
+            }
+            else{
+                trianglePluckerData = this.getPluckerCoord(triangle[i], triangle[0] ); 
+            }
+            pluckerSide = this.getPluckerSide(rayPluckerData, trianglePluckerData) > 0 ;
+
+            if(prevSideData === pluckerSide || prevSideData === null){
+                prevSideData = pluckerSide
+            }
+            else {
+                return false;
+            }
+  
+
+        }
+
+        return true;
 
     },
 

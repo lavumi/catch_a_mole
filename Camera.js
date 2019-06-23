@@ -69,7 +69,7 @@ var Camera = (function(){
 
     _camera.prototype.update = function( dt ){
 
-       // this.addOrbitalMove( dt,  0);
+     //   this.addOrbitalMove( dt,  0);
     };
 
 
@@ -119,8 +119,8 @@ var Camera = (function(){
         dir[1] = (point.x * invView[1]) + (point.y * invView[5]) + invView[9];
         dir[2] = (point.x * invView[2]) + (point.y * invView[6]) + invView[10];
 
-        dir[0] *= -1;
         dir[1] *= -1;
+        dir[2] *= -1;
 
         Utils.normalize( dir, dir);
 

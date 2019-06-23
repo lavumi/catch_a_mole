@@ -42,17 +42,21 @@ var Cube = (function(){
         var maxZ = this.aabb[5];
 
         const positions = [
-          //  Front face
-            minX, minY, maxZ,
-            maxX, minY, maxZ,
-            maxX, maxY, maxZ,
-           minX, maxY, maxZ,
 
             // // Back face
             minX, minY, minZ,
             minX, maxY, minZ,
             maxX, maxY, minZ,
             maxX, minY, minZ,
+
+
+          //  Front face
+            minX, minY, maxZ,
+            maxX, minY, maxZ,
+            maxX, maxY, maxZ,
+           minX, maxY, maxZ,
+
+
             
             // Top face
             minX, maxY, minZ,
@@ -80,7 +84,7 @@ var Cube = (function(){
         ];
 
 
-        vertexCount =36;
+        vertexCount = 36;
 
 
         const faceColors = [
