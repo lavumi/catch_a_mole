@@ -140,7 +140,7 @@ var Main = (function (){
         for( var i = -1 ; i < 2 ; i ++){
             for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
-                tempModel.moveTo( i * 2, j , j * 1.5  );
+                tempModel.moveTo( i * 2, j - 2, j * 1.5  );
 
                 objects.push(tempModel);
 
