@@ -42,14 +42,14 @@ var Main = (function (){
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
 
-        if( isMobile === true ){
-            canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        }
-        else{
-            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        }
+        // if( isMobile === true ){
+        //     canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        // }
+        // else{
+        //     //canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        // }
         
-
+        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
       //  canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
      //   canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
@@ -69,7 +69,7 @@ var Main = (function (){
         var rayObj = camera.getTouchPointRay(prevPos);
 
         for(var i = 0;i < objects.length;i++ ){
-            console.log(objects[i].getAABB() );
+           // console.log(objects[i].getAABB() );
             objects[i].checkRayCollision( rayObj );
         }
 
