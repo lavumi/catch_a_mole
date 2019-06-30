@@ -9,6 +9,8 @@ var Main = (function (){
     var objects = [];
     var renderer;
 
+    var isMobile = false;
+
 
     var _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
@@ -26,8 +28,10 @@ var Main = (function (){
         this.initInputEvent();
 
 
+        isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 
+        console.log( 'isMobile ' + isMobile );
 
         //렌더러 생성 후 콜백으로  start 진입
         renderer = new Renderer(function(){
@@ -35,19 +39,20 @@ var Main = (function (){
             }.bind(this)
         );
     };
-
-
-
-
-
-
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
-        canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+
+        if( isMobile === true ){
+            canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        }
+        else{
+            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        }
+        
+
       //  canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
      //   canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
-         canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
         // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
         // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
     };
