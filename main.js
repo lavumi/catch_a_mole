@@ -9,13 +9,29 @@ var Main = (function (){
     var objects = [];
     var renderer;
 
-    var isMobile = false;
+    var isMobile = true;
+
+
+    var checkMobile = function(){
+        var filter = "win16|win32|win64|mac";
+        if (navigator.platform ) {        
+            if (filter.indexOf(navigator.platform.toLowerCase()) < 0) {           
+                return true;          
+            } else {           
+                return false;    
+            }           
+        }   
+    }
 
 
     var _drawMain = function(){
+
+        isMobile = checkMobile();
+
+
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
-        console.log(gl);
+       
 
         if (gl === null) {
             alert("Unable to initialize WebGL. Your browser or machine may not support it.");
@@ -25,13 +41,13 @@ var Main = (function (){
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
 
+
+
+
+
+
+
         this.initInputEvent();
-
-
-        isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-
-        console.log( 'isMobile ' + isMobile );
 
         //렌더러 생성 후 콜백으로  start 진입
         renderer = new Renderer(function(){
@@ -39,17 +55,26 @@ var Main = (function (){
             }.bind(this)
         );
     };
+
+
+
+
+
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
 
-        // if( isMobile === true ){
-        //     canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        // }
-        // else{
-        //     //canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        // }
+        if( isMobile === true ){
+            console.log( 'mobile ');
+            canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        }
+        else{
+            console.log( 'not mobile ');
+            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        }
         
-        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+       // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+
+
       //  canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
      //   canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
 
@@ -63,6 +88,7 @@ var Main = (function (){
     var tempObj;
     _drawMain.prototype.onMouseDown = function(){
 
+        console.log("mouseDown");
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
 
