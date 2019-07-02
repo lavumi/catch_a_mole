@@ -18,7 +18,6 @@ varying lowp vec4 vNormal;
 
 void main() {
     gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix *  aVertexPosition;
-  //  vec4 light = vec4( uDirectionalLight.x, uDirectionalLight.y, uDirectionalLight.z, 1);
 
     vec4 worldNormal = uWorldMatrix * aVertexNormal;
 
@@ -28,19 +27,7 @@ void main() {
     worldNormal = normalize(worldNormal);
     float light = nLight.x  * worldNormal.x + nLight.y * worldNormal.y + nLight.z * worldNormal.z;
 
-
-//    float testValue = float(light > 0.2);
-//
-//
-//    float cartoonLight =  testValue;
-
-
-
     vNormal =  vec4(uAmbient+  light * 0.5,1);
-
-
-
-
 }
 
 

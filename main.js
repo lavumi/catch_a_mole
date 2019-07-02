@@ -6,7 +6,8 @@ var Main = (function (){
 
     var directionalLight;
     var camera;
-    var objects = [];
+    var characters = [];
+    var allObjects = [];
     var renderer;
 
     var isMobile = true;
@@ -15,14 +16,9 @@ var Main = (function (){
     var checkMobile = function(){
         var filter = "win16|win32|win64|mac";
         if (navigator.platform ) {        
-            if (filter.indexOf(navigator.platform.toLowerCase()) < 0) {           
-                return true;          
-            } else {           
-                return false;    
-            }           
+            return filter.indexOf(navigator.platform.toLowerCase()) >= 0;
         }   
-    }
-
+    };
 
     var _drawMain = function(){
 
@@ -55,10 +51,6 @@ var Main = (function (){
             }.bind(this)
         );
     };
-
-
-
-
 
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
@@ -94,32 +86,9 @@ var Main = (function (){
 
         var rayObj = camera.getTouchPointRay(prevPos);
 
-        for(var i = 0;i < objects.length;i++ ){
-           // console.log(objects[i].getAABB() );
-            objects[i].checkRayCollision( rayObj );
+        for(var i = 0;i < characters.length;i++ ){
+            characters[i].checkRayCollision( rayObj );
         }
-
-
-        // tempObj = new Cube( objects[0].getAABB());
-        // objects.push(tempObj);
-
-
-        // console.log( rayObj.direction );
-        // for(var i = 0;i < 13 ; i++){
-        //     tempObj = new Cube();
-        //     tempObj.moveTo(
-        //         rayObj.origin[0] + rayObj.direction[0] * i,
-        //         rayObj.origin[1] + rayObj.direction[1] * i,
-        //         rayObj.origin[2] + rayObj.direction[2] * i   
-        //     );
-        //     console.log(                rayObj.origin[0] + rayObj.direction[0] * i,
-        //         rayObj.origin[1] + rayObj.direction[1] * i,
-        //         rayObj.origin[2] + rayObj.direction[2] * i);
-        //     objects.push(tempObj);
-        // }
-
-
-
     };
 
     _drawMain.prototype.onMouseMove = function(event){
@@ -148,21 +117,23 @@ var Main = (function (){
 
     //endregion
 
+
+
+
     _drawMain.prototype.start = function(){
 
         //라이트 세팅
 
         directionalLight = new Light();
-        directionalLight.setDirection( 1.0, 1.0, 0.0);
+        directionalLight.setDirection( 0.0, 1.0, -1.0);
         renderer.setLight( directionalLight );
 
         //카메라 세팅
         camera = new Camera();
         renderer.setCamera( camera );
 
-
-
         var filename = 'Model/gopher_low';
+        var holeFileName = 'Model/hole';
 
        // var filename = 'Model/hole';
 
@@ -172,16 +143,21 @@ var Main = (function (){
             for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
                 tempModel.moveTo( i * 2, j - 2, j * 1.5  );
+                characters.push(tempModel);
+                allObjects.push(tempModel);
 
-                objects.push(tempModel);
+                tempModel = new ModelBase(holeFileName);
+                tempModel.moveTo( i * 2, j - 2, j * 1.5  );
+                tempModel.scale(2, 1, 2);
+                allObjects.push(tempModel);
 
             }
         }
 
+
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));
     };
-
 
     var then = 0;
     _drawMain.prototype.update = function( now ){
@@ -190,8 +166,8 @@ var Main = (function (){
         then = now;
 
 
-        for( var i = 0; i < objects.length ; i++){
-            objects[i].update( deltaTime );
+        for( var i = 0; i < characters.length ; i++){
+            characters[i].update( deltaTime );
         }
 
         directionalLight.update( deltaTime );
@@ -199,7 +175,8 @@ var Main = (function (){
 
 
 
-        renderer.draw( objects );
+
+        renderer.draw( allObjects );
         requestAnimationFrame(this.update.bind(this));
     };
 
