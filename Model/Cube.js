@@ -54,7 +54,7 @@ var Cube = (function(){
             minX, minY, maxZ,
             maxX, minY, maxZ,
             maxX, maxY, maxZ,
-           minX, maxY, maxZ,
+            minX, maxY, maxZ,
 
 
             

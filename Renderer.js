@@ -47,7 +47,7 @@ var Renderer = (function (){
                 vertexShader: 'shader/normalShader.vert',
                 fragmentShader: 'shader/normalShader.frag',
                 attrInfo : ['aVertexPosition', 'aVertexNormal'],
-                uniInfo : ['uAmbient', 'uDiffuse', 'uSpecular', 'uWorldMatrix','uViewMatrix', 'uProjectionMatrix', 'uDirectionalLight']
+                uniInfo : ['uAmbient', 'uDiffuse', 'uSpecular','clipPlane', 'uWorldMatrix','uViewMatrix', 'uProjectionMatrix', 'uDirectionalLight']
             },
         };
 

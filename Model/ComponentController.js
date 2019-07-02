@@ -24,10 +24,15 @@ var ModelBase = (function(){
         this._aabbData = [0,0,0,0,0,0];
         this._baseAABB = [0,0,0,0,0,0];
 
+        this.clipPlaneData = [0,0];
+        // [0] : 클립 할것인가 y : 1, n = 0
+        // [1] : 클리핑할 면 y 값
+
         var self = this;
 
         var objPath = fileName + '.obj';
         var mtlPath = fileName + '.mtl';
+
 
         this._worldMatrix = mat4.create();
 
@@ -186,6 +191,12 @@ var ModelBase = (function(){
             light.getDirection());
 
 
+        gl.uniform2fv(
+            shaderInfo.uniformLocations['clipPlane'],
+            this.clipPlaneData);
+
+
+
         for(var key in this._bufferData){
 
 
@@ -197,8 +208,6 @@ var ModelBase = (function(){
                 false,
                 0,
                 0);
-
-
             gl.enableVertexAttribArray(
                 shaderInfo.attribLocations['aVertexPosition']);
 
@@ -239,6 +248,7 @@ var ModelBase = (function(){
 
             _bounceUpdate.call(this);
     };
+
 
     model.prototype.moveTo = function ( x, y, z){
         this._worldData.position = [x, y, z];
@@ -309,6 +319,10 @@ var ModelBase = (function(){
         return this._aabbData
     };
 
+
+    model.prototype.setClipPlane = function( y ){
+        this.clipPlaneData = [1,y];
+    };
 
     return model;
 })();

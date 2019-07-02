@@ -150,149 +150,162 @@ var ShaderUtil = {
 var Utils = {
 
 
+
+    objHash : {},
+
     /**
      * obj 파일 읽어서 버텍스, 노말, 인덱스 배열 오브젝트 반환
      * @param objPath
      * @param cb
      */
     readObj : function(objPath, cb) {
-        var     readObjData = function( objStr ){
 
 
-            //임시로 저장해둘 배열
-            var vertex_temp = [];
-            var texCoord_temp = [];
-            var normal_temp = [];
+        if( this.objHash.hasOwnProperty( objPath )){
+            cb( this.objHash[objPath] );
+        }
+        else{
+            var     readObjData = function( objStr ){
 
 
-            var resultObj = {};
-            var targetMaterial = null;
-
-            var hashData = {};
-            var targetMaterialHashData = null;
-
-
-            var aabbData = [999,-999,999,-999,999,-999];
+                //임시로 저장해둘 배열
+                var vertex_temp = [];
+                var texCoord_temp = [];
+                var normal_temp = [];
 
 
-            var quadIndex = [0, 1, 2, 0, 2, 3];
+                var resultObj = {};
+                var targetMaterial = null;
 
-           // var tempArr = objStr.split('\n');
-            var tempArr = Utils.stringSplit( objStr,'\n' );
-            var tempArr_t;
-            for( var i = 0; i < tempArr.length ; i++){
-               // tempArr_t = tempArr[i].split(' ');
-                tempArr_t = Utils.stringSplit( tempArr[i],' ' );
-            //    console.log(tempArr_t);
-                if( tempArr_t[0] === 'v'){
-
-                    tempArr_t[1] /=100;
-                    tempArr_t[2] /=100;
-                    tempArr_t[3] /=100;
-
-                    vertex_temp.push(tempArr_t[1] );
-                    vertex_temp.push(tempArr_t[2] );
-                    vertex_temp.push(tempArr_t[3] );
+                var hashData = {};
+                var targetMaterialHashData = null;
 
 
-                    if( tempArr_t[1] - aabbData[0] < 0){
-                        aabbData[0] = tempArr_t[1];
-                    }
-                    else if ( tempArr_t[1] - aabbData[1] > 0){
-                        aabbData[1] = tempArr_t[1];
-                    }
+                var aabbData = [999,-999,999,-999,999,-999];
 
-                    if( tempArr_t[2] - aabbData[2] < 0){
-                        aabbData[2] = tempArr_t[2];
 
-                    }
-                    else if ( tempArr_t[2] - aabbData[3] > 0){
-                        aabbData[3] = tempArr_t[2];
+                var quadIndex = [0, 1, 2, 0, 2, 3];
 
-                    }
+                // var tempArr = objStr.split('\n');
+                var tempArr = Utils.stringSplit( objStr,'\n' );
+                var tempArr_t;
+                for( var i = 0; i < tempArr.length ; i++){
+                    // tempArr_t = tempArr[i].split(' ');
+                    tempArr_t = Utils.stringSplit( tempArr[i],' ' );
+                    //    console.log(tempArr_t);
+                    if( tempArr_t[0] === 'v'){
 
-                    if( tempArr_t[3] - aabbData[4] < 0){
-                        aabbData[4] = tempArr_t[3];
+                        tempArr_t[1] /=100;
+                        tempArr_t[2] /=100;
+                        tempArr_t[3] /=100;
 
-                    }
-                    else if ( tempArr_t[3] - aabbData[5] > 0){
-                        aabbData[5] = tempArr_t[3];
+                        vertex_temp.push(tempArr_t[1] );
+                        vertex_temp.push(tempArr_t[2] );
+                        vertex_temp.push(tempArr_t[3] );
 
-                    }
-                }
-                else if( tempArr_t[0] === 'vt'){
-                    texCoord_temp.push(tempArr_t[1]);
-                    texCoord_temp.push(tempArr_t[2]);
-                }
-                else if( tempArr_t[0] === 'vn'){
-                    normal_temp.push(tempArr_t[1]);
-                    normal_temp.push(tempArr_t[2]);
-                    normal_temp.push(    tempArr_t[3]);
-                }
-                else if( tempArr_t[0] === 'f'){
 
-                    for(var j = 0;j < quadIndex.length;j++){
-
-                        if(targetMaterial === null){
-                            console.warn("targetMaterial is null");
-                            continue;
+                        if( tempArr_t[1] - aabbData[0] < 0){
+                            aabbData[0] = tempArr_t[1];
                         }
-                        var triangleIndex = quadIndex[j] + 1;
-
-                        var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
-                        var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
-
-                        var hashKey = (vIndex0 << 16) + nIndex0;
-                        var index_temp = -1;
-
-                        if (targetMaterialHashData.hasOwnProperty( hashKey )){
-                            targetMaterial.index.push( targetMaterialHashData[hashKey]);
+                        else if ( tempArr_t[1] - aabbData[1] > 0){
+                            aabbData[1] = tempArr_t[1];
                         }
-                        else{
-                            index_temp = targetMaterial.vertex.length / 3;
-                            targetMaterialHashData[ hashKey ] = index_temp;
-                            targetMaterial.index.push( index_temp );
-                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 ]);
-                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
-                            targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
-                            targetMaterial.normal.push(normal_temp[nIndex0 * 3]);
-                            targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 1 ]);
-                            targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 2 ]);
+
+                        if( tempArr_t[2] - aabbData[2] < 0){
+                            aabbData[2] = tempArr_t[2];
+
+                        }
+                        else if ( tempArr_t[2] - aabbData[3] > 0){
+                            aabbData[3] = tempArr_t[2];
 
                         }
 
+                        if( tempArr_t[3] - aabbData[4] < 0){
+                            aabbData[4] = tempArr_t[3];
+
+                        }
+                        else if ( tempArr_t[3] - aabbData[5] > 0){
+                            aabbData[5] = tempArr_t[3];
+
+                        }
+                    }
+                    else if( tempArr_t[0] === 'vt'){
+                        texCoord_temp.push(tempArr_t[1]);
+                        texCoord_temp.push(tempArr_t[2]);
+                    }
+                    else if( tempArr_t[0] === 'vn'){
+                        normal_temp.push(tempArr_t[1]);
+                        normal_temp.push(tempArr_t[2]);
+                        normal_temp.push(    tempArr_t[3]);
+                    }
+                    else if( tempArr_t[0] === 'f'){
+
+                        for(var j = 0;j < quadIndex.length;j++){
+
+                            if(targetMaterial === null){
+                                console.warn("targetMaterial is null");
+                                continue;
+                            }
+                            var triangleIndex = quadIndex[j] + 1;
+
+                            var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
+                            var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
+
+                            var hashKey = (vIndex0 << 16) + nIndex0;
+                            var index_temp = -1;
+
+                            if (targetMaterialHashData.hasOwnProperty( hashKey )){
+                                targetMaterial.index.push( targetMaterialHashData[hashKey]);
+                            }
+                            else{
+                                index_temp = targetMaterial.vertex.length / 3;
+                                targetMaterialHashData[ hashKey ] = index_temp;
+                                targetMaterial.index.push( index_temp );
+                                targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 ]);
+                                targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 1 ]);
+                                targetMaterial.vertex.push(vertex_temp[vIndex0 * 3 + 2 ]);
+                                targetMaterial.normal.push(normal_temp[nIndex0 * 3]);
+                                targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 1 ]);
+                                targetMaterial.normal.push(normal_temp[nIndex0 * 3 + 2 ]);
+
+                            }
+
+                        }
+                    }
+                    else if( tempArr_t[0] === 'usemtl' ){
+                        if( resultObj.hasOwnProperty(tempArr_t[1]) === false){
+                            resultObj[ tempArr_t[1]] = {
+                                vertex : [],
+                                normal : [],
+                                index : [],
+                            };
+                            hashData[ tempArr_t[1] ] = [];
+                        }
+                        targetMaterial = resultObj[ tempArr_t[1]];
+                        targetMaterialHashData = hashData[ tempArr_t[1] ];
                     }
                 }
-                else if( tempArr_t[0] === 'usemtl' ){
-                    if( resultObj.hasOwnProperty(tempArr_t[1]) === false){
-                        resultObj[ tempArr_t[1]] = {
-                            vertex : [],
-                            normal : [],
-                            index : [],
-                        };
-                        hashData[ tempArr_t[1] ] = [];
-                    }
-                    targetMaterial = resultObj[ tempArr_t[1]];
-                    targetMaterialHashData = hashData[ tempArr_t[1] ];
+
+                resultObj.aabbData = aabbData;
+                return resultObj;
+
+            };
+            var request = new XMLHttpRequest();
+            var self = this;
+            request.onreadystatechange = function () {
+                if (request.readyState === 4) { //if this reqest is done
+                    //add this file to the results object
+                    var result = readObjData(request.responseText);
+
+                    self.objHash[objPath] = result;
+                    cb( result );
                 }
-            }
-
-            resultObj.aabbData = aabbData;
-            return resultObj;
-
-        };
+            };
+            request.open('GET', objPath, true);
+            request.send();
+        }
 
 
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState === 4) { //if this reqest is done
-                //add this file to the results object
-                var result = readObjData(request.responseText);
-                cb( result );
-            }
-        };
-        request.open('GET', objPath, true);
-        request.send();
     },
 
     readMtl : function( mtlPath, cb ){

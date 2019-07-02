@@ -125,7 +125,7 @@ var Main = (function (){
         //라이트 세팅
 
         directionalLight = new Light();
-        directionalLight.setDirection( 0.0, 1.0, -1.0);
+        directionalLight.setDirection( 1.0, 1.0, 0.0);
         renderer.setLight( directionalLight );
 
         //카메라 세팅
@@ -143,11 +143,15 @@ var Main = (function (){
             for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
                 tempModel.moveTo( i * 2, j - 2, j * 1.5  );
+                tempModel.setClipPlane(j - 1.2 );
                 characters.push(tempModel);
                 allObjects.push(tempModel);
 
+
+
+
                 tempModel = new ModelBase(holeFileName);
-                tempModel.moveTo( i * 2, j - 2, j * 1.5  );
+                tempModel.moveTo( i * 2, j - 1.2, j * 1.5  );
                 tempModel.scale(2, 1, 2);
                 allObjects.push(tempModel);
 
