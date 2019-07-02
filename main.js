@@ -117,9 +117,6 @@ var Main = (function (){
 
     //endregion
 
-
-
-
     _drawMain.prototype.start = function(){
 
         //라이트 세팅
@@ -143,15 +140,16 @@ var Main = (function (){
             for( var j = 0 ; j< 3 ; j ++){
                 tempModel = new ModelBase(filename);
                 tempModel.moveTo( i * 2, j - 2, j * 1.5  );
-                tempModel.setClipPlane(j - 1.2 );
+                tempModel.setClipPlane(j - 2 );
+                setGameObject(tempModel );
+
+
                 characters.push(tempModel);
                 allObjects.push(tempModel);
 
 
-
-
                 tempModel = new ModelBase(holeFileName);
-                tempModel.moveTo( i * 2, j - 1.2, j * 1.5  );
+                tempModel.moveTo( i * 2, j - 2, j * 1.5  );
                 tempModel.scale(2, 1, 2);
                 allObjects.push(tempModel);
 
@@ -174,16 +172,23 @@ var Main = (function (){
             characters[i].update( deltaTime );
         }
 
-        directionalLight.update( deltaTime );
-        camera.update( deltaTime, deltaTime );
-
-
+        // directionalLight.update( deltaTime );
+        // camera.update( deltaTime, deltaTime );
 
 
         renderer.draw( allObjects );
         requestAnimationFrame(this.update.bind(this));
     };
 
+
+    var gameTimeSpend = 0;
+    _drawMain.prototype.gameMainUpdate = function( deltaTime ){
+
+        gameTimeSpend += deltaTime;
+        if( gameTimeSpend >= 1){
+
+        }
+    };
 
         return _drawMain;
 })();

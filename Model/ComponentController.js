@@ -24,9 +24,16 @@ var ModelBase = (function(){
         this._aabbData = [0,0,0,0,0,0];
         this._baseAABB = [0,0,0,0,0,0];
 
-        this.clipPlaneData = [0,0];
+
         // [0] : 클립 할것인가 y : 1, n = 0
         // [1] : 클리핑할 면 y 값
+        this.clipPlaneData = [0,0];
+
+
+
+        this._bounceScale = 0;
+        this._movementY = 0;
+        this._speed = 0.1;
 
         var self = this;
 
@@ -47,14 +54,13 @@ var ModelBase = (function(){
             3.141592 ,// amount to rotate in radians
             [0, 1, 0]);       // axis to rotate around (X)
 
-        this.bounce();
         Utils.readObj( objPath, function( result){
 
 
             self._baseAABB = result.aabbData;
         
             self._bufferData = _makeBuffer(result);
-            self._readyToDraw = true;
+            self.initialFinishCallback();
         });
 
         Utils.readMtl( mtlPath, function(result){
@@ -102,19 +108,37 @@ var ModelBase = (function(){
         return resultObj;
     };
 
-    var _bounceUpdate = function(){
-        if(this._bounceScale >= 0){
-            this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
-            this._worldMatChanged = true;
-            this._bounceScale -= 0.03;
-        }
+    // var _bounceUpdate = function(){
+    //     if(this._bounceScale >= 0){
+    //         this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
+    //         this._worldMatChanged = true;
+    //         this._bounceScale -= 0.03;
+    //     }
+    //     if( this._movementY >= 0.1){
+    //         this._worldData.position[1] += this._speed;
+    //         this._worldMatChanged = true;
+    //         this._movementY -= this._speed;
+    //     }
+    //     else if (this._movementY <= -0.1 ){
+    //         this._worldData.position[1] -= this._speed;
+    //         this._worldMatChanged = true;
+    //         this._movementY += this._speed;
+    //     }
+    // };
 
+    model.prototype.initialFinishCallback = function(){
+        console.log( ' model.prototype.initialFinishCallback ', this );
+
+        this._readyToDraw = true;
     };
 
     model.prototype.draw = function( camera, light, shaderInfo ){
 
-        if(this._readyToDraw === false)
+
+        if(this._readyToDraw === false){
             return;
+        }
+
 
 
 
@@ -244,11 +268,10 @@ var ModelBase = (function(){
         //  readyToDraw = false;
     };
 
-    model.prototype.update = function( dt ){
-
-            _bounceUpdate.call(this);
-    };
-
+    // model.prototype.update = function( dt ){
+    //
+    //         _bounceUpdate.call(this);
+    // };
 
     model.prototype.moveTo = function ( x, y, z){
         this._worldData.position = [x, y, z];
@@ -285,11 +308,122 @@ var ModelBase = (function(){
         this._worldMatChanged = true;
     };
 
-    model.prototype.bounce = function ( force ){
-        this._bounceScale = 0.3;
+    // model.prototype.bounce = function ( force ){
+    //     this._bounceScale = 0.3;
+    // };
+
+    // model.prototype.checkRayCollision = function ( rayData ){
+    //
+    //     var minX = this._aabbData[0];
+    //     var minY = this._aabbData[2];
+    //     var minZ = this._aabbData[4];
+    //     var maxX = this._aabbData[1];
+    //     var maxY = this._aabbData[3];
+    //     var maxZ = this._aabbData[5];
+    //
+    //     //console.log(this._aabbData );
+    //
+    //     var Front = [
+    //         [minX, minY, minZ],
+    //         [minX, maxY, minZ],
+    //         [maxX, maxY, minZ],
+    //         [maxX, minY, minZ]
+    //     ];
+    //
+    //
+    //     var result =  Utils.intersectRayTriangle( rayData , Front );
+    //
+    //     if(result === true ){
+    //         this.setUpMovement();
+    //     }
+    // };
+
+    model.prototype.getAABB = function(){
+        return this._aabbData
     };
 
-    model.prototype.checkRayCollision = function ( rayData ){
+    model.prototype.setClipPlane = function( y ){
+        this.clipPlaneData = [1,y];
+    };
+
+    // model.prototype.setUpMovement = function(){
+    //     this._movementY = 1;
+    // };
+
+    return model;
+})();
+
+
+
+
+
+var setGameObject = function( obj ){
+    obj.onMove = false;
+    obj.startMoveUp = false;
+
+    var _bounceUpdate = function(){
+        if(this._bounceScale >= 0){
+            this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
+            this._worldMatChanged = true;
+            this._bounceScale -= 0.03;
+        }
+        if( this._movementY >= 0.1){
+            this._worldData.position[1] += this._speed;
+            this._worldMatChanged = true;
+            this._movementY -= this._speed;
+        }
+        else if (this._movementY <= -0.1 ){
+            this._worldData.position[1] -= this._speed;
+            this._worldMatChanged = true;
+            this._movementY += this._speed;
+        }
+    };
+
+    obj.initialFinishCallback = function(){
+        this.__proto__.initialFinishCallback.call(this);
+        obj.setUpMovement( false );
+    };
+
+    obj.update = function( dt ){
+        _bounceUpdate.call(obj);
+    };
+
+    obj.checkRayCollision = function ( rayData ){
+
+        if( this.onMove === true )
+            return false;
+        var minX = this._aabbData[0];
+        var minY = this._aabbData[2];
+        var minZ = this._aabbData[4];
+        var maxX = this._aabbData[1];
+        var maxY = this._aabbData[3];
+        var maxZ = this._aabbData[5];
+
+        //console.log(this._aabbData );
+
+        var Front = [
+            [minX, minY, minZ],
+            [minX, maxY, minZ],
+            [maxX, maxY, minZ],
+            [maxX, minY, minZ]
+        ];
+
+
+        var result =  Utils.intersectRayTriangle( rayData , Front );
+
+        if(result === true ){
+            this.setUpMovement();
+        }
+    };
+
+    obj.setUpMovement = function( moveUp ){
+        this._movementY = 0.8;
+        if(moveUp === false )
+            this._movementY = -0.8;
+        this.onMove = true;
+    };
+
+    obj.checkRayCollision = function ( rayData ){
 
         var minX = this._aabbData[0];
         var minY = this._aabbData[2];
@@ -311,18 +445,8 @@ var ModelBase = (function(){
         var result =  Utils.intersectRayTriangle( rayData , Front );
 
         if(result === true ){
-            this.bounce();
+            this.setUpMovement();
         }
     };
+};
 
-    model.prototype.getAABB = function(){
-        return this._aabbData
-    };
-
-
-    model.prototype.setClipPlane = function( y ){
-        this.clipPlaneData = [1,y];
-    };
-
-    return model;
-})();
