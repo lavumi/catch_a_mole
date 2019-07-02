@@ -29,12 +29,6 @@ var ModelBase = (function(){
         // [1] : 클리핑할 면 y 값
         this.clipPlaneData = [0,0];
 
-
-
-        this._bounceScale = 0;
-        this._movementY = 0;
-        this._speed = 0.1;
-
         var self = this;
 
         var objPath = fileName + '.obj';
@@ -127,9 +121,7 @@ var ModelBase = (function(){
     // };
 
     model.prototype.initialFinishCallback = function(){
-        console.log( ' model.prototype.initialFinishCallback ', this );
-
-        this._readyToDraw = true;
+            this._readyToDraw = true;
     };
 
     model.prototype.draw = function( camera, light, shaderInfo ){
@@ -360,32 +352,37 @@ var ModelBase = (function(){
 var setGameObject = function( obj ){
     obj.onMove = false;
     obj.startMoveUp = false;
+    obj.baseY_Pos = 0;
+    obj._speed = 5;
 
-    var _bounceUpdate = function(){
+    var _bounceUpdate = function(dt){
         if(this._bounceScale >= 0){
             this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
             this._worldMatChanged = true;
             this._bounceScale -= 0.03;
         }
-        if( this._movementY >= 0.1){
-            this._worldData.position[1] += this._speed;
+        if( this.onMove === true ){
+            this._movementY += this._speed * dt;
+            var moveY = this._movementY;
+            var addValue = 1 - Math.abs( 1 - moveY );
+            this._worldData.position[1] = this.baseY_Pos + addValue;
             this._worldMatChanged = true;
-            this._movementY -= this._speed;
+            console.log( addValue );
+            if( this._movementY >= 2 ){
+                this._worldData.position[1] = this.baseY_Pos;
+                this.onMove = false;
+            }
+
         }
-        else if (this._movementY <= -0.1 ){
-            this._worldData.position[1] -= this._speed;
-            this._worldMatChanged = true;
-            this._movementY += this._speed;
-        }
+
     };
 
     obj.initialFinishCallback = function(){
         this.__proto__.initialFinishCallback.call(this);
-        obj.setUpMovement( false );
     };
 
     obj.update = function( dt ){
-        _bounceUpdate.call(obj);
+        _bounceUpdate.call(obj, dt);
     };
 
     obj.checkRayCollision = function ( rayData ){
@@ -417,9 +414,10 @@ var setGameObject = function( obj ){
     };
 
     obj.setUpMovement = function( moveUp ){
-        this._movementY = 0.8;
-        if(moveUp === false )
-            this._movementY = -0.8;
+        if( this.onMove === true )
+            return;
+        this.baseY_Pos = this._worldData.position[1];
+        this._movementY = 0;
         this.onMove = true;
     };
 
@@ -449,4 +447,5 @@ var setGameObject = function( obj ){
         }
     };
 };
+
 
