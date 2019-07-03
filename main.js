@@ -8,6 +8,7 @@ var Main = (function (){
     var camera;
     var characters = [];
     var allObjects = [];
+    var rayCheckObj = [];
     var renderer;
 
     var isMobile = true;
@@ -79,15 +80,19 @@ var Main = (function (){
     var prevPos = [0,0];
     var tempObj;
     _drawMain.prototype.onMouseDown = function(){
-
-        console.log("mouseDown");
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
 
         var rayObj = camera.getTouchPointRay(prevPos);
 
-        for(var i = 0;i < characters.length;i++ ){
-            characters[i].checkRayCollision( rayObj );
+        for(var i = 0;i < rayCheckObj.length;i++ ){
+            if( rayCheckObj[i].checkRayCollision( rayObj ) === true ){
+                if( typeof rayCheckObj[i].setUpMovement === 'function'){
+                    rayCheckObj[i].setUpMovement();
+                }
+                break;
+            }
+
         }
     };
 
@@ -136,18 +141,36 @@ var Main = (function (){
 
         //모델 생성
         var tempModel;
-        for( var i = -1 ; i < 2 ; i ++){
-            for( var j = 0 ; j< 3 ; j ++){
+        var rectangleArea;
+        var i = j = 0;
+        for(j = 0 ; j< 3 ; j ++){
+        //세로 칸막이 배경 생성
+            rectangleArea = [
+                -3,3,
+                -3+j,-2+j,
+                -1 + j * 1.5,-1 + j * 1.5
+            ];
+            tempModel = new Rectangle(rectangleArea);
+
+            addRayCheck( tempModel );
+            rayCheckObj.push(tempModel);
+            allObjects.push(tempModel);
+
+            for( i = -1 ; i < 2 ; i ++){
+
+                //두더지 모델 생성
                 tempModel = new ModelBase(filename);
                 tempModel.moveTo( i * 2, j - 3, j * 1.5  );
                 tempModel.setClipPlane(j - 2 );
-                setGameObject(tempModel );
 
+                setGameObject(tempModel );
+                addRayCheck( tempModel );
 
                 characters.push(tempModel);
-                allObjects.push(tempModel);
+                rayCheckObj.push(tempModel);
+                allObjects.push(tempModel);                
 
-
+                //가로 구멍 배경 생성
                 tempModel = new ModelBase(holeFileName);
                 tempModel.moveTo( i * 2, j - 2, j * 1.5  );
                 tempModel.scale(2, 1, 2);
@@ -155,6 +178,8 @@ var Main = (function (){
 
             }
         }
+
+
 
 
         //업데이트 루프 시작

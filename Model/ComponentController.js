@@ -300,36 +300,6 @@ var ModelBase = (function(){
         this._worldMatChanged = true;
     };
 
-    // model.prototype.bounce = function ( force ){
-    //     this._bounceScale = 0.3;
-    // };
-
-    // model.prototype.checkRayCollision = function ( rayData ){
-    //
-    //     var minX = this._aabbData[0];
-    //     var minY = this._aabbData[2];
-    //     var minZ = this._aabbData[4];
-    //     var maxX = this._aabbData[1];
-    //     var maxY = this._aabbData[3];
-    //     var maxZ = this._aabbData[5];
-    //
-    //     //console.log(this._aabbData );
-    //
-    //     var Front = [
-    //         [minX, minY, minZ],
-    //         [minX, maxY, minZ],
-    //         [maxX, maxY, minZ],
-    //         [maxX, minY, minZ]
-    //     ];
-    //
-    //
-    //     var result =  Utils.intersectRayTriangle( rayData , Front );
-    //
-    //     if(result === true ){
-    //         this.setUpMovement();
-    //     }
-    // };
-
     model.prototype.getAABB = function(){
         return this._aabbData
     };
@@ -337,10 +307,6 @@ var ModelBase = (function(){
     model.prototype.setClipPlane = function( y ){
         this.clipPlaneData = [1,y];
     };
-
-    // model.prototype.setUpMovement = function(){
-    //     this._movementY = 1;
-    // };
 
     return model;
 })();
@@ -367,12 +333,10 @@ var setGameObject = function( obj ){
             var addValue = 1 - Math.abs( 1 - moveY );
             this._worldData.position[1] = this.baseY_Pos + addValue;
             this._worldMatChanged = true;
-            console.log( addValue );
             if( this._movementY >= 2 ){
                 this._worldData.position[1] = this.baseY_Pos;
                 this.onMove = false;
             }
-
         }
 
     };
@@ -385,34 +349,6 @@ var setGameObject = function( obj ){
         _bounceUpdate.call(obj, dt);
     };
 
-    obj.checkRayCollision = function ( rayData ){
-
-        if( this.onMove === true )
-            return false;
-        var minX = this._aabbData[0];
-        var minY = this._aabbData[2];
-        var minZ = this._aabbData[4];
-        var maxX = this._aabbData[1];
-        var maxY = this._aabbData[3];
-        var maxZ = this._aabbData[5];
-
-        //console.log(this._aabbData );
-
-        var Front = [
-            [minX, minY, minZ],
-            [minX, maxY, minZ],
-            [maxX, maxY, minZ],
-            [maxX, minY, minZ]
-        ];
-
-
-        var result =  Utils.intersectRayTriangle( rayData , Front );
-
-        if(result === true ){
-            this.setUpMovement();
-        }
-    };
-
     obj.setUpMovement = function( moveUp ){
         if( this.onMove === true )
             return;
@@ -421,31 +357,44 @@ var setGameObject = function( obj ){
         this.onMove = true;
     };
 
-    obj.checkRayCollision = function ( rayData ){
 
-        var minX = this._aabbData[0];
-        var minY = this._aabbData[2];
-        var minZ = this._aabbData[4];
-        var maxX = this._aabbData[1];
-        var maxY = this._aabbData[3];
-        var maxZ = this._aabbData[5];
-
-        //console.log(this._aabbData );
-
-        var Front = [
-            [minX, minY, minZ],
-            [minX, maxY, minZ],
-            [maxX, maxY, minZ],
-            [maxX, minY, minZ]
-        ];
-
-
-        var result =  Utils.intersectRayTriangle( rayData , Front );
-
-        if(result === true ){
-            this.setUpMovement();
-        }
-    };
 };
 
 
+var addRayCheck = function(obj){
+
+    obj._rayCheckArea = [];
+    obj.setRayCheckArea = function( squareData ){
+        this._rayCheckArea = squareData;
+    };
+
+    obj.checkRayCollision = function ( rayData ){
+
+        var RayCheckArea ;
+        if(this._rayCheckArea.length !== 0){
+            RayCheckArea = this._rayCheckArea;
+        }
+        else{
+            var minX = this._aabbData[0];
+            var minY = this._aabbData[2];
+            var minZ = this._aabbData[4];
+            var maxX = this._aabbData[1];
+            var maxY = this._aabbData[3];
+            var maxZ = this._aabbData[5];
+    
+            //console.log(this._aabbData );
+    
+            RayCheckArea = [
+                [minX, minY, minZ],
+                [minX, maxY, minZ],
+                [maxX, maxY, maxZ],
+                [maxX, minY, maxZ]
+            ];
+        }
+
+
+
+        var result =  Utils.intersectRayTriangle( rayData , RayCheckArea );
+        return result;
+    };
+}
