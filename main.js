@@ -70,6 +70,8 @@ var Main = (function (){
     };
 
     //region [Mouse Event]
+
+    var lastTouchEnd = 0;
     _drawMain.prototype.initInputEvent = function(){
 
         // if( isMobile === true ){
@@ -89,6 +91,15 @@ var Main = (function (){
 
         // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
         // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
+
+
+        document.documentElement.addEventListener('touchend', function (event) {
+            var now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     };
 
 
