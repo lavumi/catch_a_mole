@@ -39,7 +39,7 @@ var Rectangle = (function(){
         }
 
         this.makeBuffer();
-        initTextures.call(this);
+      //  initTextures.call(this);
 
         this._readyToDraw = false;
 
