@@ -2,13 +2,33 @@ var Rectangle = (function(){
 
     var vertexCount = 0;
 
+    function handleTextureLoaded(image, texture) {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
+        this._readyToDraw = true;
+    }
+
+    var  initTextures = function() {
+        this.texture = gl.createTexture();
+        this.image = new Image();
+        var self = this;
+        this.image.onload = function() {
+            console.log(' this.image.onload' );
+            handleTextureLoaded.call(self,self.image, self.texture);
+        };
+        this.image.src = "image/1560304692.jpg";
+    };
 
     var _rectangle = function( aabb){
        this.worldMatrix = mat4.create();
 
        this.buffer = null;
-
+        this._shaderName = 'textureShader';
         if(!!aabb === true){
              this._aabbData = aabb;
         }
@@ -19,6 +39,9 @@ var Rectangle = (function(){
         }
 
         this.makeBuffer();
+        initTextures.call(this);
+
+        this._readyToDraw = false;
 
     };
 
@@ -29,7 +52,7 @@ var Rectangle = (function(){
 
         this.buffer =  {
             position: null,
-            color : null,
+            uv : null,
             indices : null,
         };
 
@@ -45,16 +68,19 @@ var Rectangle = (function(){
             // // Back face
             minX, minY, minZ,
             minX, maxY, minZ,
-            maxX, maxY, maxZ,
-            maxX, minY, maxZ,
+            maxX, maxY, minZ,
+            maxX, minY, minZ,
 
         ];
 
         vertexCount = 6;
 
 
-        const faceColors = [
-            [0.5,  0.5,  0.5,  1.0]
+        const uv = [
+           0,0,
+            0,1,
+            1,1,
+            1,0
         ];
 
         const indices = [
@@ -68,15 +94,13 @@ var Rectangle = (function(){
 
 
 
-        var colors = [];
-        for (var j = 0; j < faceColors.length; ++j) {
-            const c = faceColors[j];
-            colors = colors.concat(c, c, c, c);
-        }
 
-        const colorBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+        const uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.STATIC_DRAW);
+
+
+
 
         const indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -85,14 +109,18 @@ var Rectangle = (function(){
 
 
         this.buffer.position = positionBuffer;
-        this.buffer.color = colorBuffer;
+        this.buffer.uv = uvBuffer;
         this.buffer.indices = indexBuffer;
 
 
 
     };
 
-    _rectangle.prototype.draw = function( camera, light, shaderInfo ){
+    _rectangle.prototype.draw = function( camera, light , renderer){
+
+        if( this._readyToDraw === false)
+             return;
+        var shaderInfo = renderer.getShaderInfo( this._shaderName );
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.position);
         gl.vertexAttribPointer(
@@ -102,19 +130,17 @@ var Rectangle = (function(){
             false,
             0,
             0);
-
-
         gl.enableVertexAttribArray(
             shaderInfo.attribLocations['aVertexPosition']);
 
 
 
-        if(shaderInfo.attribLocations.hasOwnProperty('aVertexColor')){
+        if(shaderInfo.attribLocations.hasOwnProperty('uv')){
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.color);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.uv);
             gl.vertexAttribPointer(
-                shaderInfo.attribLocations['aVertexColor'],
-                4, // position r, g, b, a
+                shaderInfo.attribLocations['uv'],
+                2,
                 gl.FLOAT,
                 true,
                 0,
@@ -122,16 +148,25 @@ var Rectangle = (function(){
 
 
             gl.enableVertexAttribArray(
-                shaderInfo.attribLocations['aVertexColor']);
+                shaderInfo.attribLocations['uv']);
         }
 
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffer.indices);
 
+
+
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.uniform1i(shaderInfo.uniformLocations['texture'], 0);
+
+
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+
         gl.useProgram(shaderInfo.program);
-
-
-
         gl.uniformMatrix4fv(
             shaderInfo.uniformLocations['uProjectionMatrix'],
             false,

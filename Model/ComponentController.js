@@ -12,6 +12,9 @@ var ModelBase = (function(){
         this._worldData = null;
         this._worldMatChanged = true;
 
+        this._shaderName = 'normalShader';
+        this._shaderInfo = null;
+
 
         /**
          * 0 : minX,
@@ -124,15 +127,13 @@ var ModelBase = (function(){
             this._readyToDraw = true;
     };
 
-    model.prototype.draw = function( camera, light, shaderInfo ){
+    model.prototype.draw = function( camera, light , renderer){
 
+        var shaderInfo = renderer.getShaderInfo( this._shaderName );
 
         if(this._readyToDraw === false){
             return;
         }
-
-
-
 
         gl.useProgram(shaderInfo.program);
 
@@ -308,12 +309,12 @@ var ModelBase = (function(){
         this.clipPlaneData = [1,y];
     };
 
+    model.prototype.setShader = function( shaderName ){
+        this._shaderName = shaderName;
+    };
+
     return model;
 })();
-
-
-
-
 
 var setGameObject = function( obj ){
     obj.onMove = false;

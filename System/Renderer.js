@@ -49,6 +49,18 @@ var Renderer = (function (){
                 attrInfo : ['aVertexPosition', 'aVertexNormal'],
                 uniInfo : ['uAmbient', 'uDiffuse', 'uSpecular','clipPlane', 'uWorldMatrix','uViewMatrix', 'uProjectionMatrix', 'uDirectionalLight']
             },
+            textureShader: {
+                vertexShader: 'shader/simpleTextureShader.vert',
+                fragmentShader: 'shader/simpleTextureShader.frag',
+                attrInfo : ['aVertexPosition', 'uv'],
+                uniInfo : ['uWorldMatrix','uViewMatrix', 'uProjectionMatrix', 'text' ]
+            },
+            // fontShader: {
+            //     vertexShader: 'shader/fontShader.vert',
+            //     fragmentShader: 'shader/fontShader.frag',
+            //     attrInfo : ['posUV'],
+            //     uniInfo : ['projection', 'text', 'textColor']
+            // },
         };
 
         //쉐이더 비동기로 생성후 콜백 실행
@@ -70,20 +82,28 @@ var Renderer = (function (){
     //endregion
 
 
+    _renderer.prototype.getShaderInfo = function( shaderName ){
+        if( shaderData.hasOwnProperty( shaderName ))
+            return shaderData[shaderName];
+        else
+            return null;
+    };
+
+
     /**
      * 화면 그리는 함수
      * @param objects
      */
     _renderer.prototype.draw = function(objects){
         this.clearScreen();
-
+        var renderer = this;
         for( var i = 0; i < objects.length ; i++){
+
             (function(index){
-                objects[index].draw( camera,light, shaderData.normalShader );
+                objects[index].draw( camera,light, renderer);
             })(i);
         }
     };
-
 
     /**
      * 화면 클리어 함수
@@ -124,7 +144,6 @@ var Renderer = (function (){
     _renderer.prototype.setLight = function( pLight ){
         light = pLight;
     };
-
 
     /**
      * 카메라 세팅후 화면 리사이즈 한번 해주자(필요 없을수도 있음) (여러대의 카메라 등록시 변경 필요)
