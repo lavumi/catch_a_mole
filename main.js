@@ -93,7 +93,7 @@ var Main = (function (){
         // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
 
-        document.documentElement.addEventListener('touchend', function (event) {
+        canvas.addEventListener('touchend', function (event) {
             var now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
                 event.preventDefault();
