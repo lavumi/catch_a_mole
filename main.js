@@ -53,6 +53,22 @@ var Main = (function (){
         );
     };
 
+    var timeSpend = 0;
+    var _gameMainUpdate = function(dt){
+        if(timeSpend <=1){
+            timeSpend += dt;
+            return;
+        }
+
+        timeSpend = 0;
+        var rnd = Math.floor(Math.random() * 9);
+
+        console.log(rnd);
+
+        characters[rnd].setUpMovement();
+
+    };
+
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
 
@@ -78,7 +94,6 @@ var Main = (function (){
 
     var mouseDown = false;
     var prevPos = [0,0];
-    var tempObj;
     _drawMain.prototype.onMouseDown = function(){
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
@@ -87,8 +102,8 @@ var Main = (function (){
 
         for(var i = 0;i < rayCheckObj.length;i++ ){
             if( rayCheckObj[i].checkRayCollision( rayObj ) === true ){
-                if( typeof rayCheckObj[i].setUpMovement === 'function'){
-                    rayCheckObj[i].setUpMovement();
+                if( typeof rayCheckObj[i].bounce === 'function'){
+                    rayCheckObj[i].bounce();
                 }
                 break;
             }
@@ -160,7 +175,7 @@ var Main = (function (){
 
                 //두더지 모델 생성
                 tempModel = new ModelBase(filename);
-                tempModel.moveTo( i * 2, j - 3, j * 1.5  );
+                tempModel.moveTo( i * 2, j - 4, j * 1.5  );
                 tempModel.setClipPlane(j - 2 );
 
                 setGameObject(tempModel );
@@ -186,13 +201,15 @@ var Main = (function (){
         requestAnimationFrame(this.update.bind(this));
     };
 
+
+
     var then = 0;
     _drawMain.prototype.update = function( now ){
         now *= 0.001;
         var deltaTime = now - then;
         then = now;
 
-
+        _gameMainUpdate(deltaTime);
         for( var i = 0; i < characters.length ; i++){
             characters[i].update( deltaTime );
         }
@@ -204,6 +221,9 @@ var Main = (function (){
         renderer.draw( allObjects );
         requestAnimationFrame(this.update.bind(this));
     };
+
+
+
 
 
     var gameTimeSpend = 0;

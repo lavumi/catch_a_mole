@@ -326,14 +326,15 @@ var setGameObject = function( obj ){
             this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
             this._worldMatChanged = true;
             this._bounceScale -= 0.03;
+            return;
         }
         if( this.onMove === true ){
             this._movementY += this._speed * dt;
             var moveY = this._movementY;
-            var addValue = 1 - Math.abs( 1 - moveY );
+            var addValue = 2 - Math.abs( 2 - moveY );
             this._worldData.position[1] = this.baseY_Pos + addValue;
             this._worldMatChanged = true;
-            if( this._movementY >= 2 ){
+            if( this._movementY >= 4 ){
                 this._worldData.position[1] = this.baseY_Pos;
                 this.onMove = false;
             }
@@ -347,6 +348,11 @@ var setGameObject = function( obj ){
 
     obj.update = function( dt ){
         _bounceUpdate.call(obj, dt);
+    };
+
+
+    obj.bounce = function ( ){
+        this._bounceScale = 0.3;
     };
 
     obj.setUpMovement = function( moveUp ){
