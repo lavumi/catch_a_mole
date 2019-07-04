@@ -72,15 +72,15 @@ var Main = (function (){
     //region [Mouse Event]
     _drawMain.prototype.initInputEvent = function(){
 
-        if( isMobile === true ){
-            console.log( 'mobile ');
+        // if( isMobile === true ){
+        //     console.log( 'mobile ');
             canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        }
-        else{
-            console.log( 'not mobile ');
-            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        }
-        
+        // }
+        // else{
+        //     console.log( 'not mobile ');
+         //    canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        // }
+        //
        // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
 
 
