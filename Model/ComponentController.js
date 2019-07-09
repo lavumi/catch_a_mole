@@ -8,6 +8,9 @@ var ModelBase = (function(){
         this._worldMatrix = null;
 
 
+
+        this._finishMaterialLoad = false;
+        this._finishModelLoad = false;
         this._readyToDraw = false;
         this._worldData = null;
         this._worldMatChanged = true;
@@ -57,11 +60,12 @@ var ModelBase = (function(){
             self._baseAABB = result.aabbData;
         
             self._bufferData = _makeBuffer(result);
-            self.initialFinishCallback();
+            self.initialFinishCallback(0);
         });
 
         Utils.readMtl( mtlPath, function(result){
             self._materialData = result;
+            self.initialFinishCallback(1);
         });
     };
 
@@ -123,18 +127,30 @@ var ModelBase = (function(){
     //     }
     // };
 
-    model.prototype.initialFinishCallback = function(){
+
+
+    model.prototype.initialFinishCallback = function( loadtype ){
+        console.log(' initialFinishCallback loadType ', loadtype);
+        if(loadtype === 0)
+            this._finishModelLoad = true;
+        else if( loadtype === 1)
+            this._finishMaterialLoad = true;
+
+        if( this._finishModelLoad === true &&
+            this._finishMaterialLoad === true)
             this._readyToDraw = true;
+
+        console.log(this._finishModelLoad, this._finishMaterialLoad ,this._readyToDraw);
     };
 
     model.prototype.draw = function( camera, light , renderer){
 
-        var shaderInfo = renderer.getShaderInfo( this._shaderName );
+
 
         if(this._readyToDraw === false){
             return;
         }
-
+        var shaderInfo = renderer.getShaderInfo( this._shaderName );
         gl.useProgram(shaderInfo.program);
 
 
@@ -343,9 +359,9 @@ var setGameObject = function( obj ){
 
     };
 
-    obj.initialFinishCallback = function(){
-        this.__proto__.initialFinishCallback.call(this);
-    };
+    // obj.initialFinishCallback = function(){
+    //     this.__proto__.initialFinishCallback.call(this);
+    // };
 
     obj.update = function( dt ){
         _bounceUpdate.call(obj, dt);

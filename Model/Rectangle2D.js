@@ -21,7 +21,7 @@ var Rectangle = (function(){
             console.log(' this.image.onload' );
             handleTextureLoaded.call(self,self.image, self.texture);
         };
-        this.image.src = "image/1560304692.jpg";
+        this.image.src = "image/cubetexture.png";
     };
 
     var _rectangle = function( aabb){
@@ -39,7 +39,7 @@ var Rectangle = (function(){
         }
 
         this.makeBuffer();
-      //  initTextures.call(this);
+        initTextures.call(this);
 
         this._readyToDraw = false;
 
@@ -120,6 +120,7 @@ var Rectangle = (function(){
 
         if( this._readyToDraw === false)
              return;
+
         var shaderInfo = renderer.getShaderInfo( this._shaderName );
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.position);
@@ -157,9 +158,7 @@ var Rectangle = (function(){
 
 
 
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        gl.uniform1i(shaderInfo.uniformLocations['texture'], 0);
+
 
 
         var texture = gl.createTexture();
@@ -183,6 +182,12 @@ var Rectangle = (function(){
             shaderInfo.uniformLocations['uWorldMatrix'],
             false,
             this.worldMatrix);
+
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+        gl.uniform1i(shaderInfo.uniformLocations['texture'], 0);
 
         {
 

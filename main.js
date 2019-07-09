@@ -92,9 +92,18 @@ var Main = (function (){
         // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
         // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
 
-        canvas.addEventListener('touchmove', function (event) {
-            if (event.scale !== 1) { event.preventDefault(); }
-        }, { passive: false });
+
+        canvas.addEventListener('touchend', function (event) {
+            var now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        //
+        // canvas.addEventListener('touchmove', function (event) {
+        //     if (event.scale !== 1) { event.preventDefault(); }
+        // }, { passive: false });
     };
 
 
