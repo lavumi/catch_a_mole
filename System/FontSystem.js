@@ -42,17 +42,12 @@ var FontSystem = (function(){
         uvy2 = y / 128;
         uvy1 = uvy2 + height / 128;
 
-
-
         fontBufferData.push([
             uvx1, uvy1,
             uvx1, uvy2,
             uvx2, uvy2,
             uvx2, uvy1
         ]);
-
-
-
     };
 
     var _fontSystem = function(){
@@ -62,6 +57,7 @@ var FontSystem = (function(){
 
         this.position = [0,0];
         this.size = 1;
+        this.string = '1234';
 
         initFontBufferData(18,0);
         initFontBufferData(36,0);
@@ -93,35 +89,70 @@ var FontSystem = (function(){
 
     _fontSystem.prototype.makeBuffer = function() {
 
-        var pos = [
-           0, 0.017,
-           0, 0.025 ];
-        if( this.buffer !== null )
-            return;
 
         this.buffer =  {
             position: null,
             uv : null,
             indices : null,
         };
+        vertexCount = 0;
 
-        const positions = [
+        console.log(this.string.length);
 
-            pos[0], pos[2],
-            pos[0], pos[3],
-            pos[1], pos[3],
-            pos[1], pos[2],
-        ];
+        var  positions = [];
+        var uv = [];
+        var indices = [];
+
+        var pos;
+        var fontData ;
+
+        for(var i = 0;i < this.string.length ;i ++){
+            pos = [
+                i * 0.018 ,
+                i * 0.018 + 0.017,
+                0,
+                0.025 ];
 
 
-        vertexCount = 6;
 
-        const uv = fontBufferData[0];
+            positions.push(pos[0]);
+            positions.push(pos[2]);
+            positions.push(pos[0]);
+            positions.push(pos[3]);
+            positions.push(pos[1]);
+            positions.push(pos[3]);
+            positions.push(pos[1]);
+            positions.push(pos[2]);
 
-        const indices = [
-            0,  1,  2,      0,  2,  3,    // front
-        ];
 
+
+            vertexCount += 6;
+
+            fontData = fontBufferData[this.string[i]];
+
+            uv.push(fontData[0]);
+            uv.push(fontData[1]);
+            uv.push(fontData[2]);
+            uv.push(fontData[3]);
+            uv.push(fontData[4]);
+            uv.push(fontData[5]);
+            uv.push(fontData[6]);
+            uv.push(fontData[7]);
+
+
+
+
+            indices.push(0 + i * 4);
+            indices.push(1 + i * 4);
+            indices.push(2 + i * 4);
+            indices.push(0 + i * 4);
+            indices.push(2 + i * 4);
+            indices.push(3 + i * 4);
+4
+        }
+
+
+        console.log(positions);
 
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -217,6 +248,11 @@ var FontSystem = (function(){
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         }
 
+    };
+
+    _fontSystem.prototype.setString = function( string ){
+        this.string = string.toString();
+        this.makeBuffer();
     };
 
     return _fontSystem;

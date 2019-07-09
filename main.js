@@ -56,6 +56,7 @@ var Main = (function (){
     };
 
     var timeSpend = 0;
+    var testValue = 0;
     var _gameMainUpdate = function(dt){
         if(timeSpend <=1){
             timeSpend += dt;
@@ -64,9 +65,8 @@ var Main = (function (){
 
         timeSpend = 0;
         var rnd = Math.floor(Math.random() * 9);
-
-        console.log(rnd);
-
+        fontSystem.setString(testValue);
+        testValue ++;
         characters[rnd].setUpMovement();
 
     };
@@ -221,6 +221,7 @@ var Main = (function (){
 
         fontSystem = new FontSystem();
         fontSystem.setPosition(0,0.2);
+        fontSystem.setSize( 2);
         allObjects.push(fontSystem);
 
         //업데이트 루프 시작
