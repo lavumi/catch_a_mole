@@ -97,8 +97,6 @@ var FontSystem = (function(){
         };
         vertexCount = 0;
 
-        console.log(this.string.length);
-
         var  positions = [];
         var uv = [];
         var indices = [];
@@ -150,9 +148,6 @@ var FontSystem = (function(){
             indices.push(3 + i * 4);
 4
         }
-
-
-        console.log(positions);
 
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
