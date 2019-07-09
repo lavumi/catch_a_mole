@@ -11,6 +11,8 @@ var Main = (function (){
     var rayCheckObj = [];
     var renderer;
 
+
+    var fontSystem ;
     var isMobile = true;
 
 
@@ -154,6 +156,9 @@ var Main = (function (){
 
     _drawMain.prototype.start = function(){
 
+
+
+
         //라이트 세팅
 
         directionalLight = new Light();
@@ -164,6 +169,10 @@ var Main = (function (){
         camera = new Camera();
         renderer.setCamera( camera );
 
+
+
+
+
         var filename = 'Model/gopher_low';
         var holeFileName = 'Model/hole';
 
@@ -172,7 +181,7 @@ var Main = (function (){
         //모델 생성
         var tempModel;
         var rectangleArea;
-        var i = j = 0;
+        var i =0, j = 0;
         for(j = 0 ; j< 3 ; j ++){
         //세로 칸막이 배경 생성
             rectangleArea = [
@@ -210,12 +219,13 @@ var Main = (function (){
         }
 
 
-
+        fontSystem = new FontSystem();
+        fontSystem.setPosition(0,0.2);
+        allObjects.push(fontSystem);
 
         //업데이트 루프 시작
         requestAnimationFrame(this.update.bind(this));
     };
-
 
 
     var then = 0;

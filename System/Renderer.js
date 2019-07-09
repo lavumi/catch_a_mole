@@ -55,12 +55,12 @@ var Renderer = (function (){
                 attrInfo : ['aVertexPosition', 'uv'],
                 uniInfo : ['uWorldMatrix','uViewMatrix', 'uProjectionMatrix', 'text' ]
             },
-            // fontShader: {
-            //     vertexShader: 'shader/fontShader.vert',
-            //     fragmentShader: 'shader/fontShader.frag',
-            //     attrInfo : ['posUV'],
-            //     uniInfo : ['projection', 'text', 'textColor']
-            // },
+            fontShader: {
+                vertexShader: 'shader/fontShader.vert',
+                fragmentShader: 'shader/fontShader.frag',
+                attrInfo : ['aPos', 'aUV'],
+                uniInfo : ['uiWorld', 'projection', 'text', 'textColor']
+            },
         };
 
         //쉐이더 비동기로 생성후 콜백 실행

@@ -18,7 +18,6 @@ var Rectangle = (function(){
         this.image = new Image();
         var self = this;
         this.image.onload = function() {
-            console.log(' this.image.onload' );
             handleTextureLoaded.call(self,self.image, self.texture);
         };
         this.image.src = "image/cubetexture.png";

@@ -130,7 +130,6 @@ var ModelBase = (function(){
 
 
     model.prototype.initialFinishCallback = function( loadtype ){
-        console.log(' initialFinishCallback loadType ', loadtype);
         if(loadtype === 0)
             this._finishModelLoad = true;
         else if( loadtype === 1)
@@ -140,7 +139,6 @@ var ModelBase = (function(){
             this._finishMaterialLoad === true)
             this._readyToDraw = true;
 
-        console.log(this._finishModelLoad, this._finishMaterialLoad ,this._readyToDraw);
     };
 
     model.prototype.draw = function( camera, light , renderer){
