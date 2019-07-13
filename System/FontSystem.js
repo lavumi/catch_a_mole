@@ -1,6 +1,6 @@
 var FontSystem = (function(){
 
-    var FontAtlas ='https://lavumi.github.io/webGL_test/Image/digitalFont.png';
+    var FontAtlas ='Image/digitalFont.png';
     var vertexCount = 0;
 
     function handleTextureLoaded(image, texture) {
