@@ -57,7 +57,7 @@ var FontSystem = (function(){
 
         this.position = [0,0];
         this.size = 1;
-        this.string = '1234';
+        this.string = '0';
 
         initFontBufferData(18,0);
         initFontBufferData(36,0);

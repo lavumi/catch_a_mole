@@ -18,8 +18,10 @@ var Main = (function (){
 
     var checkMobile = function(){
         var filter = "win16|win32|win64|mac";
-        if (navigator.platform ) {        
-            return filter.indexOf(navigator.platform.toLowerCase()) >= 0;
+        if (navigator.platform ) {   
+            console.log(navigator.platform ); 
+            console.log(filter.indexOf(navigator.platform.toLowerCase()) );      
+            return filter.indexOf(navigator.platform.toLowerCase()) < 0;
         }   
     };
 
@@ -65,8 +67,7 @@ var Main = (function (){
 
         timeSpend = 0;
         var rnd = Math.floor(Math.random() * 9);
-        fontSystem.setString(testValue);
-        testValue ++;
+
         characters[rnd].setUpMovement();
 
     };
@@ -76,24 +77,14 @@ var Main = (function (){
     var lastTouchEnd = 0;
     _drawMain.prototype.initInputEvent = function(){
 
-        // if( isMobile === true ){
-        //     console.log( 'mobile ');
+        if( isMobile === true ){
+            console.log( 'mobile ');
             canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        // }
-        // else{
-        //     console.log( 'not mobile ');
-         //    canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        // }
-        //
-       // canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-
-
-      //  canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-     //   canvas.addEventListener('mouseup', this.onMouseDUp.bind(this));
-
-        // canvas.addEventListener('touchmove', this.onMouseMove.bind(this));
-        // canvas.addEventListener('touchend', this.onMouseDUp.bind(this));
-
+        }
+        else{
+            console.log( 'not mobile ');
+            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        }
 
         canvas.addEventListener('touchend', function (event) {
             var now = (new Date()).getTime();
@@ -120,6 +111,8 @@ var Main = (function (){
         for(var i = 0;i < rayCheckObj.length;i++ ){
             if( rayCheckObj[i].checkRayCollision( rayObj ) === true ){
                 if( typeof rayCheckObj[i].bounce === 'function'){
+                    fontSystem.setString(testValue);
+                    testValue ++;
                     rayCheckObj[i].bounce();
                 }
                 break;
@@ -147,7 +140,6 @@ var Main = (function (){
 
     _drawMain.prototype.onMouseDUp = function(){
         mouseDown = false;
-        console.log('onMouseDUp called');
 
     };
 
@@ -185,9 +177,9 @@ var Main = (function (){
         for(j = 0 ; j< 3 ; j ++){
         //세로 칸막이 배경 생성
             rectangleArea = [
-                -3,3,
-                -3+j,-2+j,
-                -1 + j * 1.5,-1 + j * 1.5
+                -3,         3,
+                -3+j,       -2+j,
+                -1 + j * 2,   -1 + j * 2
             ];
             tempModel = new Rectangle(rectangleArea);
 
@@ -199,7 +191,7 @@ var Main = (function (){
 
                 //두더지 모델 생성
                 tempModel = new ModelBase(filename);
-                tempModel.moveTo( i * 2, j - 4, j * 1.5  );
+                tempModel.moveTo( i * 2, j - 4, j * 2  );
                 tempModel.setClipPlane(j - 2 );
 
                 setGameObject(tempModel );
@@ -211,7 +203,7 @@ var Main = (function (){
 
                 //가로 구멍 배경 생성
                 tempModel = new ModelBase(holeFileName);
-                tempModel.moveTo( i * 2, j - 2, j * 1.5  );
+                tempModel.moveTo( i * 2, j - 2, j * 2 );
                 tempModel.scale(2, 1, 2);
                 allObjects.push(tempModel);
 
