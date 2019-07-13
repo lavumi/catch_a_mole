@@ -20,7 +20,7 @@ var Rectangle = (function(){
         this.image.onload = function() {
             handleTextureLoaded.call(self,self.image, self.texture);
         };
-        this.image.src = "image/cubetexture.png";
+        this.image.src = "Image/cubetexture.png";
     };
 
     var _rectangle = function( aabb){
