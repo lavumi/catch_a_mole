@@ -42,12 +42,6 @@ var Main = (function (){
         if ( typeof canvas.requestFullscreen === 'function')
             canvas.requestFullscreen();
 
-
-
-
-
-
-
         this.initInputEvent();
 
         //렌더러 생성 후 콜백으로  start 진입
@@ -220,8 +214,11 @@ var Main = (function (){
         timeSpend = 0;
 
 
-        var rnd = Math.floor(Math.random() * 9);
-        characters[rnd].setUpMovement();
+        for( var i = 0;i <= currentScore / 10  && i < 3; i++){
+            var rnd = Math.floor(Math.random() * 9);
+            characters[rnd].setUpMovement();
+        }
+
 
     };
 
@@ -240,7 +237,7 @@ var Main = (function (){
             characters[i].update( deltaTime );
         }
 
-        // directionalLight.update( deltaTime );
+       // directionalLight.update( deltaTime );
         // camera.update( deltaTime, deltaTime );
 
 

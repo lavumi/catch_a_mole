@@ -19,24 +19,25 @@ var Light = (function(){
     };
 
 
-    _light.prototype.update = function( dt ){
+    _light.prototype.update = function( deltaTime ){
 
-        // var rotPos ;
+        var dt = deltaTime * 1000;
+        var rotPos ;
         // rotPos = [
         //     direction[0] * Math.cos(-Math.PI / 180 ) - direction[1] * Math.sin(-Math.PI / 180 ),
         //     direction[0] * Math.sin(-Math.PI / 180) + direction[1] * Math.cos(-Math.PI / 180 ),
         //     direction[2]
         // ];
         // direction = rotPos;
-        // rotPos = [
-        //     direction[0],
-        //     direction[1] * Math.cos(-Math.PI / 180) - direction[2] * Math.sin(-Math.PI / 180 ),
-        //     direction[1] * Math.sin(-Math.PI / 180) + direction[2] * Math.cos(-Math.PI / 180 ),
-        //
-        // ];
-        // direction = rotPos;
-        //
-        // Utils.normalize(direction, direction);
+        rotPos = [
+            direction[0],
+            direction[1] * Math.cos(-Math.PI / 180 * dt) - direction[2] * Math.sin(-Math.PI / 180 * dt),
+            direction[1] * Math.sin(-Math.PI / 180 * dt) + direction[2] * Math.cos(-Math.PI / 180 * dt),
+        
+        ];
+        direction = rotPos;
+        
+        Utils.normalize(direction, direction);
        //
     };
 

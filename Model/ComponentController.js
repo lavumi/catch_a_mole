@@ -409,8 +409,6 @@ var addRayCheck = function(obj){
             var maxY = this._aabbData[3];
             var maxZ = this._aabbData[5];
     
-            //console.log(this._aabbData );
-    
             RayCheckArea = [
                 [minX, minY, minZ],
                 [minX, maxY, minZ],
