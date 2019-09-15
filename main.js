@@ -57,20 +57,7 @@ var Main = (function (){
         );
     };
 
-    var timeSpend = 0;
-    var testValue = 0;
-    var _gameMainUpdate = function(dt){
-        if(timeSpend <=1){
-            timeSpend += dt;
-            return;
-        }
 
-        timeSpend = 0;
-        var rnd = Math.floor(Math.random() * 9);
-
-        characters[rnd].setUpMovement();
-
-    };
 
     //region [Mouse Event]
 
@@ -102,6 +89,7 @@ var Main = (function (){
 
     var mouseDown = false;
     var prevPos = [0,0];
+    var currentScore = 0;
     _drawMain.prototype.onMouseDown = function(){
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
@@ -111,8 +99,8 @@ var Main = (function (){
         for(var i = 0;i < rayCheckObj.length;i++ ){
             if( rayCheckObj[i].checkRayCollision( rayObj ) === true ){
                 if( typeof rayCheckObj[i].bounce === 'function'){
-                    fontSystem.setString(testValue);
-                    testValue ++;
+                    currentScore ++;
+                    fontSystem.setString(currentScore);
                     rayCheckObj[i].bounce();
                 }
                 break;
@@ -221,11 +209,31 @@ var Main = (function (){
     };
 
 
+    var timeSpend = 0;
+
+    var timeScale = 1;
+    var _gameMainUpdate = function(dt){
+        if(timeSpend <= 1){
+            timeSpend += dt;
+            return;
+        }
+        timeSpend = 0;
+
+
+        var rnd = Math.floor(Math.random() * 9);
+        characters[rnd].setUpMovement();
+
+    };
+
     var then = 0;
     _drawMain.prototype.update = function( now ){
         now *= 0.001;
         var deltaTime = now - then;
         then = now;
+
+        deltaTime *= timeScale;
+
+        timeScale = currentScore / 30 + 1;
 
         _gameMainUpdate(deltaTime);
         for( var i = 0; i < characters.length ; i++){

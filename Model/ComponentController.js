@@ -376,6 +376,7 @@ var setGameObject = function( obj ){
         this.baseY_Pos = this._worldData.position[1];
         this._movementY = 0;
         this.onMove = true;
+        this._clicked = false;
     };
 
 
@@ -389,8 +390,13 @@ var addRayCheck = function(obj){
         this._rayCheckArea = squareData;
     };
 
+    obj._clicked = false;
     obj.checkRayCollision = function ( rayData ){
 
+        if(this._clicked === true )
+            return;
+            
+        this._clicked = true;
         var RayCheckArea ;
         if(this._rayCheckArea.length !== 0){
             RayCheckArea = this._rayCheckArea;
