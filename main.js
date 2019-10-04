@@ -19,8 +19,10 @@ var Main = (function (){
     var checkMobile = function(){
         var filter = "win16|win32|win64|mac";
         if (navigator.platform ) {   
-            console.log(navigator.platform ); 
-            console.log(filter.indexOf(navigator.platform.toLowerCase()) );      
+            // console.log(navigator.platform );
+            // console.log(filter.indexOf(navigator.platform.toLowerCase()) );
+            //location.href = "http://m.naver.com";
+
             return filter.indexOf(navigator.platform.toLowerCase()) < 0;
         }   
     };
