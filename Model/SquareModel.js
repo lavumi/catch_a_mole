@@ -1,12 +1,12 @@
-var Square = (function(){
+let Square = (function(){
 
 
-    var buffer = {
+    let buffer = {
         position: null,
         color : null,
     };
 
-    var _square = function(){
+    let _square = function(){
 
         this.makeBuffer();
 
@@ -14,14 +14,14 @@ var Square = (function(){
 
     _square.prototype.makeBuffer = function() {
 
-        var positions = [
+        let positions = [
             -1.0,  1.0,
             1.0,  1.0,
             -1.0, -1.0,
             1.0, -1.0,
         ];
 
-        var positionBuffer = gl.createBuffer();
+        let positionBuffer = gl.createBuffer();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER,
@@ -31,14 +31,14 @@ var Square = (function(){
         buffer['position'] = positionBuffer;
 
 
-        var colors = [
+        let colors = [
             1.0,  1.0,  1.0,  1.0,    // white
             1.0,  0.0,  0.0,  1.0,    // red
             0.0,  1.0,  0.0,  1.0,    // green
             0.0,  0.0,  1.0,  1.0,    // blue
         ];
 
-        var colorBuffer = gl.createBuffer();
+        let colorBuffer = gl.createBuffer();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
         gl.bufferData(gl.ARRAY_BUFFER,

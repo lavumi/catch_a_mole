@@ -1,6 +1,6 @@
-var Ray = (function (){
+let Ray = (function (){
 
-    var _ray = function(){
+    let _ray = function(){
         this._point = [0,0,0];
         this._direction = [1,0,0];
 

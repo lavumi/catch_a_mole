@@ -1,14 +1,14 @@
 
 
-var Renderer = (function (){
+let Renderer = (function (){
 
-    var shaderData;
-    var light;
-    var camera;
+    let shaderData;
+    let light;
+    let camera;
 
 
     //기본 배경 색상
-    var clearColor = {
+    let clearColor = {
         r : 0,
         g : 0,
         b : 0,
@@ -20,7 +20,7 @@ var Renderer = (function (){
      * @param cb 생성후 실행할 콜백
      * @private
      */
-    var _renderer = function(cb){
+    let _renderer = function(cb){
 
 
         //화면 리사이즈 할때 크기 조정
@@ -30,7 +30,7 @@ var Renderer = (function (){
         this.clearScreen( 1, 1, 1, 1);
 
         //쉐이더 데이터 obj 만들기
-        var shaders = {
+        let shaders = {
             simpleShader: {
                 vertexShader: 'shader/simple.vert',
                 fragmentShader: 'shader/simple.frag',
@@ -72,7 +72,7 @@ var Renderer = (function (){
     };
 
     //region [Private Functions]
-    var resizeCanvas = function(){
+    let resizeCanvas = function(){
         canvas.width = window.innerWidth - 40;
         canvas.height = window.innerHeight - 40;
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -96,8 +96,8 @@ var Renderer = (function (){
      */
     _renderer.prototype.draw = function(objects){
         this.clearScreen();
-        var renderer = this;
-        for( var i = 0; i < objects.length ; i++){
+        let renderer = this;
+        for( let i = 0; i < objects.length ; i++){
 
             (function(index){
                 objects[index].draw( camera,light, renderer);

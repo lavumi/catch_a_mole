@@ -1,26 +1,26 @@
 
-var Camera = (function(){
+let Camera = (function(){
 
-    var projectionData = {
+    let projectionData = {
         fov: 0,
         aspect : 0,
         near : 0,
         far : 0
     };
 
-    var projectionMatrix = null;
-    var viewMatrix = null;
+    let projectionMatrix = null;
+    let viewMatrix = null;
 
 
 
-    var orbitalMoveData = {
+    let orbitalMoveData = {
           theta: 3.141592/2,
           pie : 0,
         radius : 6,
     };
 
 
-    var _camera = function(){
+    let _camera = function(){
 
         projectionData.fov = 45 * Math.PI / 180;
         projectionData.aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
@@ -74,7 +74,7 @@ var Camera = (function(){
 
 
     _camera.prototype.addOrbitalMove = function( dTheta, dPie , dRadius){
-        var x, y, z;
+        let x, y, z;
 
         dRadius = 0;
         orbitalMoveData.theta += dTheta;
@@ -89,20 +89,20 @@ var Camera = (function(){
         z = Math.cos(orbitalMoveData.theta) * orbitalMoveData.radius;
 
 
-        var upVector = [0,Math.cos( orbitalMoveData.pie ),0];
+        let upVector = [0,Math.cos( orbitalMoveData.pie ),0];
         Utils.normalize( upVector, upVector);
         mat4.lookAt( viewMatrix, [ x, y, z], [ 0, 0, 0  ], upVector );
 
     };
 
     _camera.prototype.getTouchPointRay = function( screenPoint ){
-        var screenPosX = screenPoint[0];
-        var screenPosY = screenPoint[1];
+        let screenPosX = screenPoint[0];
+        let screenPosY = screenPoint[1];
 
 
 
 
-        var point = {x : 0, y : 0};
+        let point = {x : 0, y : 0};
         point.x = ((2.0 * screenPosX) / canvas.width) - 1.0;
         point.y = (((2.0 * screenPosY) / canvas.height) - 1.0) ;
 
@@ -110,11 +110,11 @@ var Camera = (function(){
         point.y = point.y / projectionMatrix[5];
 
 
-        var invView;
+        let invView;
         invView = mat4.create();
         mat4.invert(invView, viewMatrix);
 
-        var dir = [0,0,0];
+        let dir = [0,0,0];
         dir[0] = (point.x * invView[0]) + (point.y * invView[4]) + invView[8];
         dir[1] = (point.x * invView[1]) + (point.y * invView[5]) + invView[9];
         dir[2] = (point.x * invView[2]) + (point.y * invView[6]) + invView[10];

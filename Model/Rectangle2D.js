@@ -1,6 +1,6 @@
-var Rectangle = (function(){
+let Rectangle = (function(){
 
-    var vertexCount = 0;
+    let vertexCount = 0;
 
     function handleTextureLoaded(image, texture) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -13,17 +13,17 @@ var Rectangle = (function(){
         this._readyToDraw = true;
     }
 
-    var  initTextures = function() {
+    let  initTextures = function() {
         this.texture = gl.createTexture();
         this.image = new Image();
-        var self = this;
+        let self = this;
         this.image.onload = function() {
             handleTextureLoaded.call(self,self.image, self.texture);
         };
         this.image.src = "Image/cubetexture.png";
     };
 
-    var _rectangle = function( aabb){
+    let _rectangle = function( aabb){
        this.worldMatrix = mat4.create();
 
        this.buffer = null;
@@ -55,13 +55,11 @@ var Rectangle = (function(){
             indices : null,
         };
 
-        var minX = this._aabbData[0];
-        var minY = this._aabbData[2];
-        var minZ = this._aabbData[4];
-        var maxX = this._aabbData[1];
-        var maxY = this._aabbData[3];
-        var maxZ = this._aabbData[5];
-
+        let minX = this._aabbData[0];
+        let minY = this._aabbData[2];
+        let minZ = this._aabbData[4];
+        let maxX = this._aabbData[1];
+        let maxY = this._aabbData[3];
         const positions = [
 
             // // Back face
@@ -120,7 +118,7 @@ var Rectangle = (function(){
         if( this._readyToDraw === false)
              return;
 
-        var shaderInfo = renderer.getShaderInfo( this._shaderName );
+        let shaderInfo = renderer.getShaderInfo( this._shaderName );
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.position);
         gl.vertexAttribPointer(
@@ -160,7 +158,7 @@ var Rectangle = (function(){
 
 
 
-        var texture = gl.createTexture();
+        let texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
 

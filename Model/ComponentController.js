@@ -1,7 +1,7 @@
-var ModelBase = (function(){
+let ModelBase = (function(){
 
 
-    var model = function(fileName){
+    let model = function(fileName){
 
         this._bufferData = null;
         this._materialData = null;
@@ -35,10 +35,10 @@ var ModelBase = (function(){
         // [1] : 클리핑할 면 y 값
         this.clipPlaneData = [0,0];
 
-        var self = this;
+        let self = this;
 
-        var objPath = fileName + '.obj';
-        var mtlPath = fileName + '.mtl';
+        let objPath = fileName + '.obj';
+        let mtlPath = fileName + '.mtl';
 
 
         this._worldMatrix = mat4.create();
@@ -69,27 +69,27 @@ var ModelBase = (function(){
         });
     };
 
-    var _makeBuffer = function(dataObj){
+    let _makeBuffer = function(dataObj){
 
-        var resultObj = {};
+        let resultObj = {};
 
-        for(var key in dataObj){
+        for(let key in dataObj){
 
             if(key === 'aabbData')
                 continue;
 
-            var singleData = dataObj[key];
-            var vertexBuffer = gl.createBuffer();
+            let singleData = dataObj[key];
+            let vertexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(singleData.vertex), gl.STATIC_DRAW);
 
 
-            var normalBuffer = gl.createBuffer();
+            let normalBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(singleData.normal), gl.STATIC_DRAW);
 
 
-            var indexBuffer = gl.createBuffer();
+            let indexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
                 new Uint16Array(singleData.index), gl.STATIC_DRAW);
@@ -109,7 +109,7 @@ var ModelBase = (function(){
         return resultObj;
     };
 
-    // var _bounceUpdate = function(){
+    // let _bounceUpdate = function(){
     //     if(this._bounceScale >= 0){
     //         this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
     //         this._worldMatChanged = true;
@@ -148,7 +148,7 @@ var ModelBase = (function(){
         if(this._readyToDraw === false){
             return;
         }
-        var shaderInfo = renderer.getShaderInfo( this._shaderName );
+        let shaderInfo = renderer.getShaderInfo( this._shaderName );
         gl.useProgram(shaderInfo.program);
 
 
@@ -228,7 +228,7 @@ var ModelBase = (function(){
 
 
 
-        for(var key in this._bufferData){
+        for(let key in this._bufferData){
 
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._bufferData[key].vertex);
@@ -330,13 +330,13 @@ var ModelBase = (function(){
     return model;
 })();
 
-var setGameObject = function( obj ){
+let setGameObject = function( obj ){
     obj.onMove = false;
     obj.startMoveUp = false;
     obj.baseY_Pos = 0;
     obj._speed = 5;
 
-    var _bounceUpdate = function(dt){
+    let _bounceUpdate = function(dt){
         if(this._bounceScale >= 0){
             this._worldData.scale = [ 1 + this._bounceScale, 1 - this._bounceScale, 1 + this._bounceScale];
             this._worldMatChanged = true;
@@ -345,8 +345,8 @@ var setGameObject = function( obj ){
         }
         if( this.onMove === true ){
             this._movementY += this._speed * dt;
-            var moveY = this._movementY;
-            var addValue = 2 - Math.abs( 2 - moveY );
+            let moveY = this._movementY;
+            let addValue = 2 - Math.abs( 2 - moveY );
             this._worldData.position[1] = this.baseY_Pos + addValue;
             this._worldMatChanged = true;
             if( this._movementY >= 4 ){
@@ -370,7 +370,7 @@ var setGameObject = function( obj ){
         this._bounceScale = 0.3;
     };
 
-    obj.setUpMovement = function( moveUp ){
+    obj.setUpMovement = function( ){
         if( this.onMove === true )
             return;
         this.baseY_Pos = this._worldData.position[1];
@@ -383,7 +383,7 @@ var setGameObject = function( obj ){
 };
 
 
-var addRayCheck = function(obj){
+let addRayCheck = function(obj){
 
     obj._rayCheckArea = [];
     obj.setRayCheckArea = function( squareData ){
@@ -397,17 +397,17 @@ var addRayCheck = function(obj){
             return;
             
         this._clicked = true;
-        var RayCheckArea ;
+        let RayCheckArea ;
         if(this._rayCheckArea.length !== 0){
             RayCheckArea = this._rayCheckArea;
         }
         else{
-            var minX = this._aabbData[0];
-            var minY = this._aabbData[2];
-            var minZ = this._aabbData[4];
-            var maxX = this._aabbData[1];
-            var maxY = this._aabbData[3];
-            var maxZ = this._aabbData[5];
+            let minX = this._aabbData[0];
+            let minY = this._aabbData[2];
+            let minZ = this._aabbData[4];
+            let maxX = this._aabbData[1];
+            let maxY = this._aabbData[3];
+            let maxZ = this._aabbData[5];
     
             RayCheckArea = [
                 [minX, minY, minZ],
@@ -419,7 +419,6 @@ var addRayCheck = function(obj){
 
 
 
-        var result =  Utils.intersectRayTriangle( rayData , RayCheckArea );
-        return result;
+        return Utils.intersectRayTriangle(rayData, RayCheckArea);
     };
 }

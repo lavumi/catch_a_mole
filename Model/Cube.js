@@ -1,11 +1,11 @@
-var Cube = (function(){
+let Cube = (function(){
 
-    var vertexCount = 0;
+    let vertexCount = 0;
 
 
-    var buffer = null;
+    let buffer = null;
 
-    var _cube = function( aabb){
+    let _cube = function( aabb){
        this.worldMatrix = mat4.create();
 
 
@@ -34,12 +34,12 @@ var Cube = (function(){
             indices : null,
         };
 
-        var minX = this.aabb[0];
-        var minY = this.aabb[2];
-        var minZ = this.aabb[4];
-        var maxX = this.aabb[1];
-        var maxY = this.aabb[3];
-        var maxZ = this.aabb[5];
+        let minX = this.aabb[0];
+        let minY = this.aabb[2];
+        let minZ = this.aabb[4];
+        let maxX = this.aabb[1];
+        let maxY = this.aabb[3];
+        let maxZ = this.aabb[5];
 
         const positions = [
 
@@ -112,8 +112,8 @@ var Cube = (function(){
 
 
 
-        var colors = [];
-        for (var j = 0; j < faceColors.length; ++j) {
+        let colors = [];
+        for (let j = 0; j < faceColors.length; ++j) {
             const c = faceColors[j];
             colors = colors.concat(c, c, c, c);
         }

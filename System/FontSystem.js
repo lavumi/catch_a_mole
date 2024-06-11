@@ -1,7 +1,7 @@
-var FontSystem = (function(){
+let FontSystem = (function(){
 
-    var FontAtlas ='Image/digitalFont.png';
-    var vertexCount = 0;
+    let FontAtlas ='Image/digitalFont.png';
+    let vertexCount = 0;
 
     function handleTextureLoaded(image, texture) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -14,10 +14,10 @@ var FontSystem = (function(){
         this._readyToDraw = true;
     }
 
-    var  initTextures = function() {
+    let  initTextures = function() {
         this.texture = gl.createTexture();
         this.image = new Image();
-        var self = this;
+        let self = this;
         this.image.onload = function() {
             handleTextureLoaded.call(self,self.image, self.texture);
         };
@@ -25,14 +25,14 @@ var FontSystem = (function(){
     };
 
 
-    var fontBufferData = [
+    let fontBufferData = [
     ];
 
 
-    var initFontBufferData = function(x, y){
+    let initFontBufferData = function(x, y){
 
-        var width = 16, height = 25;
-        var uvx1, uvx2, uvy1, uvy2;
+        let width = 16, height = 25;
+        let uvx1, uvx2, uvy1, uvy2;
 
 
 
@@ -50,7 +50,7 @@ var FontSystem = (function(){
         ]);
     };
 
-    var _fontSystem = function(){
+    let _fontSystem = function(){
 
         this.buffer = null;
         this._shaderName = 'fontShader';
@@ -97,14 +97,14 @@ var FontSystem = (function(){
         };
         vertexCount = 0;
 
-        var  positions = [];
-        var uv = [];
-        var indices = [];
+        let  positions = [];
+        let uv = [];
+        let indices = [];
 
-        var pos;
-        var fontData ;
+        let pos;
+        let fontData ;
 
-        for(var i = 0;i < this.string.length ;i ++){
+        for(let i = 0;i < this.string.length ;i ++){
             pos = [
                 i * 0.018 ,
                 i * 0.018 + 0.017,
@@ -140,10 +140,10 @@ var FontSystem = (function(){
 
 
 
-            indices.push(0 + i * 4);
+            indices.push(i * 4);
             indices.push(1 + i * 4);
             indices.push(2 + i * 4);
-            indices.push(0 + i * 4);
+            indices.push(i * 4);
             indices.push(2 + i * 4);
             indices.push(3 + i * 4);
 4
@@ -182,7 +182,7 @@ var FontSystem = (function(){
 
         if( this._readyToDraw === false)
             return;
-        var shaderInfo = renderer.getShaderInfo( this._shaderName );
+        let shaderInfo = renderer.getShaderInfo( this._shaderName );
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.position);
         gl.vertexAttribPointer(
@@ -225,7 +225,7 @@ var FontSystem = (function(){
 
 
 
-        var texture = gl.createTexture();
+        let texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         gl.activeTexture(gl.TEXTURE0);

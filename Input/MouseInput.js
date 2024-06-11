@@ -1,7 +1,7 @@
-var getMousePosition = function (event, element) {
-    var boundingRect = element.getBoundingClientRect();
+let getMousePosition = function (event, element) {
+    let boundingRect = element.getBoundingClientRect();
 
-    var result;
+    let result;
     if( !!event.touches === true ){
         result = [
             event.touches[0].clientX - boundingRect.left,

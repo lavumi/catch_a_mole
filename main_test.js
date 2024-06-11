@@ -1,8 +1,8 @@
 
-var testObject = (function(){
-    var _data;
+let testObject = (function(){
+    let _data;
 
-    var _object = function(){
+    let _object = function(){
 
         this._data = 0;
         _data = 0;
@@ -26,20 +26,18 @@ return _object;
 })();
 
 
-var MainTest = (function(){
+let MainTest = (function(){
 
-    var _testMain = function(){
+    return function () {
 
-        var obj1 = new testObject();
+        let obj1 = new testObject();
 
-        var obj2 = new testObject();
+        let obj2 = new testObject();
 
         obj2.setData();
 
-        console.log( obj1.getData());
+        console.log(obj1.getData());
 
-        console.log( obj1, obj2);
+        console.log(obj1, obj2);
     };
-
-    return _testMain;
 })();

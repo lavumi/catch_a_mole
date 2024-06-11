@@ -1,24 +1,24 @@
-var Sphere = (function(){
+let Sphere = (function(){
 
-    var vertexCount = 0;
-    var indexCount = 0;
-    var positions = [];
-    var normals = [];
-    var indices = [];
-    var recursionLevel = 0;
+    let vertexCount = 0;
+    let indexCount = 0;
+    let positions = [];
+    let normals = [];
+    let indices = [];
+    let recursionLevel = 0;
 
-    var radius = 1;
+    let radius = 1;
 
-    var worldMatrix = null;
+    let worldMatrix = null;
 
 
-    var buffer = {
+    let buffer = {
         position: null,
         normal : null,
         indices : null,
     };
 
-    var _sphere = function( detail ){
+    let _sphere = function( detail ){
         worldMatrix = mat4.create();
         if(isNaN(detail) === false)
             recursionLevel = 2;
@@ -33,11 +33,11 @@ var Sphere = (function(){
      * @param p2
      */
 
-    var middlePointCash = {};
+    let middlePointCash = {};
 
-    var getMiddlePoint = function(p1, p2){
-        var p1x, p1y, p1z;
-        var p2x, p2y, p2z;
+    let getMiddlePoint = function(p1, p2){
+        let p1x, p1y, p1z;
+        let p2x, p2y, p2z;
 
 
         p1x = positions[p1 * 3];
@@ -48,18 +48,18 @@ var Sphere = (function(){
         p2y = positions[p2 * 3+1];
         p2z = positions[p2 * 3+2];
 
-        var isSmall = p1 < p2;
+        let isSmall = p1 < p2;
 
-        var smallerIndex = isSmall ? p1 : p2;
-        var greaterIndex = isSmall ? p2 : p1;
+        let smallerIndex = isSmall ? p1 : p2;
+        let greaterIndex = isSmall ? p2 : p1;
 
-        var hashKey = (smallerIndex << 16) + greaterIndex;
+        let hashKey = (smallerIndex << 16) + greaterIndex;
         if( middlePointCash.hasOwnProperty(hashKey) ){
            // console.log('MiddlePoint return : ' , middlePointCash[hashKey]);
             return middlePointCash[hashKey];
         }
         else{
-            var pos = [
+            let pos = [
                 (p1x + p2x) / 2,
                 (p1y + p2y) / 2,
                 (p1z + p2z) / 2];
@@ -82,8 +82,8 @@ var Sphere = (function(){
     };
 
 
-    var addVertexData = function( data){
-        var pos = [];
+    let addVertexData = function( data){
+        let pos = [];
         Utils.normalize(pos, data);
         normals = normals.concat(pos);
 
@@ -96,7 +96,7 @@ var Sphere = (function(){
 
     _sphere.prototype.makeBuffer = function(){
 
-        var t = (1.0 + Math.sqrt(5.0)) / 2.0;
+        let t = (1.0 + Math.sqrt(5.0)) / 2.0;
 
 
 
@@ -144,12 +144,12 @@ var Sphere = (function(){
         indices = indices.concat([9, 8, 1]);
 
 
-        for( var i = 0;i < recursionLevel;i++ ){
-            var newIndices = [];
-            for( var j = 0;j < indices.length; j += 3){
-                var a = getMiddlePoint(indices[j], indices[j+1]);
-                var b = getMiddlePoint(indices[j+2], indices[j+1]);
-                var c = getMiddlePoint(indices[j], indices[j+2]);
+        for( let i = 0;i < recursionLevel;i++ ){
+            let newIndices = [];
+            for( let j = 0;j < indices.length; j += 3){
+                let a = getMiddlePoint(indices[j], indices[j+1]);
+                let b = getMiddlePoint(indices[j+2], indices[j+1]);
+                let c = getMiddlePoint(indices[j], indices[j+2]);
 
               //  console.log(indices[j], indices[j+1],indices[j+2], a, b, c );
 
@@ -164,18 +164,18 @@ var Sphere = (function(){
 
 
 
-        var positionBuffer = gl.createBuffer();
+        let positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
 
-        var normalBuffer = gl.createBuffer();
+        let normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
 
 
-        var indexBuffer = gl.createBuffer();
+        let indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
             new Uint16Array(indices), gl.STATIC_DRAW);

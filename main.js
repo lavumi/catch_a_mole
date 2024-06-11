@@ -1,37 +1,19 @@
 //귀찮으니 이 둘은 전역으로...
-var gl;
-var canvas;
+let gl;
+let canvas;
 
-var Main = (function (){
+let Main = (function (){
 
-    var directionalLight;
-    var camera;
-    var characters = [];
-    var allObjects = [];
-    var rayCheckObj = [];
-    var renderer;
-
-
-    var fontSystem ;
-    var isMobile = true;
+    let directionalLight;
+    let camera;
+    let characters = [];
+    let allObjects = [];
+    let rayCheckObj = [];
+    let renderer;
 
 
-    var checkMobile = function(){
-        var filter = "win16|win32|win64|mac";
-        if (navigator.platform ) {   
-            // console.log(navigator.platform );
-            // console.log(filter.indexOf(navigator.platform.toLowerCase()) );
-            //location.href = "http://m.naver.com";
-
-            return filter.indexOf(navigator.platform.toLowerCase()) < 0;
-        }   
-    };
-
-    var _drawMain = function(){
-
-        isMobile = checkMobile();
-
-
+    let fontSystem ;
+    let _drawMain = function(){
         canvas = document.querySelector("#glCanvas");
         gl = canvas.getContext("webgl");
        
@@ -57,42 +39,31 @@ var Main = (function (){
 
     //region [Mouse Event]
 
-    var lastTouchEnd = 0;
+    let lastTouchEnd = 0;
     _drawMain.prototype.initInputEvent = function(){
-
-        if( isMobile === true ){
-            console.log( 'mobile ');
-            canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
-        }
-        else{
-            console.log( 'not mobile ');
-            canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        }
+        canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
+        canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
 
         canvas.addEventListener('touchend', function (event) {
-            var now = (new Date()).getTime();
+            let now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
                 event.preventDefault();
             }
             lastTouchEnd = now;
         }, false);
-        //
-        // canvas.addEventListener('touchmove', function (event) {
-        //     if (event.scale !== 1) { event.preventDefault(); }
-        // }, { passive: false });
     };
 
 
-    var mouseDown = false;
-    var prevPos = [0,0];
-    var currentScore = 0;
+    let mouseDown = false;
+    let prevPos = [0,0];
+    let currentScore = 0;
     _drawMain.prototype.onMouseDown = function(){
         mouseDown = true;
         prevPos = getMousePosition(event, canvas);
 
-        var rayObj = camera.getTouchPointRay(prevPos);
+        let rayObj = camera.getTouchPointRay(prevPos);
 
-        for(var i = 0;i < rayCheckObj.length;i++ ){
+        for(let i = 0;i < rayCheckObj.length;i++ ){
             if( rayCheckObj[i].checkRayCollision( rayObj ) === true ){
                 if( typeof rayCheckObj[i].bounce === 'function'){
                     currentScore ++;
@@ -105,35 +76,9 @@ var Main = (function (){
         }
     };
 
-    _drawMain.prototype.onMouseMove = function(event){
-        if(mouseDown === false )
-            return;
-        var curMousePos = getMousePosition(event, canvas);
-        var moveDelta = [
-            (curMousePos[0] - prevPos[0]) / 50,
-                (curMousePos[1] - prevPos[1]) / 50
-        ];
-        prevPos = curMousePos;
-
-
-        for( var i = 0; i < objects.length;i++)
-            objects[i].rotate(0, moveDelta[0],0);
-
-        //camera.addOrbitalMove(moveDelta[0], moveDelta[1], 5 );
-    };
-
-    _drawMain.prototype.onMouseDUp = function(){
-        mouseDown = false;
-
-    };
-
-
     //endregion
 
     _drawMain.prototype.start = function(){
-
-
-
 
         //라이트 세팅
 
@@ -149,15 +94,15 @@ var Main = (function (){
 
 
 
-        var filename = 'Model/gopher_low';
-        var holeFileName = 'Model/hole';
+        let filename = 'Model/gopher_low';
+        let holeFileName = 'Model/hole';
 
-       // var filename = 'Model/hole';
+       // let filename = 'Model/hole';
 
         //모델 생성
-        var tempModel;
-        var rectangleArea;
-        var i =0, j = 0;
+        let tempModel;
+        let rectangleArea;
+        let i =0, j;
         for(j = 0 ; j< 3 ; j ++){
         //세로 칸막이 배경 생성
             rectangleArea = [
@@ -205,10 +150,10 @@ var Main = (function (){
     };
 
 
-    var timeSpend = 0;
+    let timeSpend = 0;
 
-    var timeScale = 1;
-    var _gameMainUpdate = function(dt){
+    let timeScale = 1;
+    let _gameMainUpdate = function(dt){
         if(timeSpend <= 1){
             timeSpend += dt;
             return;
@@ -216,18 +161,18 @@ var Main = (function (){
         timeSpend = 0;
 
 
-        for( var i = 0;i <= currentScore / 10  && i < 3; i++){
-            var rnd = Math.floor(Math.random() * 9);
+        for( let i = 0;i <= currentScore / 10  && i < 3; i++){
+            let rnd = Math.floor(Math.random() * 9);
             characters[rnd].setUpMovement();
         }
 
 
     };
 
-    var then = 0;
+    let then = 0;
     _drawMain.prototype.update = function( now ){
         now *= 0.001;
-        var deltaTime = now - then;
+        let deltaTime = now - then;
         then = now;
 
         deltaTime *= timeScale;
@@ -235,7 +180,7 @@ var Main = (function (){
         timeScale = currentScore / 30 + 1;
 
         _gameMainUpdate(deltaTime);
-        for( var i = 0; i < characters.length ; i++){
+        for( let i = 0; i < characters.length ; i++){
             characters[i].update( deltaTime );
         }
 
@@ -251,7 +196,7 @@ var Main = (function (){
 
 
 
-    var gameTimeSpend = 0;
+    let gameTimeSpend = 0;
     _drawMain.prototype.gameMainUpdate = function( deltaTime ){
 
         gameTimeSpend += deltaTime;

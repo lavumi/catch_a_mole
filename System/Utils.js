@@ -1,4 +1,4 @@
-var ShaderUtil = {
+let ShaderUtil = {
 
     /**
      * 쉐이더 만들기
@@ -14,8 +14,8 @@ var ShaderUtil = {
          * @param source
          * @returns {WebGLShader}
          */
-        var buildShader = function(gl, type, source) {
-            var shader = gl.createShader(type);
+        let buildShader = function(gl, type, source) {
+            let shader = gl.createShader(type);
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
 
@@ -38,16 +38,16 @@ var ShaderUtil = {
               },
          * @param cb
          */
-        var readShader = function (singleShaderData, cb) {
-            var result = {};
+        let readShader = function (singleShaderData, cb) {
+            let result = {};
 
-            var paramCount = 0;
+            let paramCount = 0;
 
-            for( var key in singleShaderData ){
+            for( let key in singleShaderData ){
                 if(key.indexOf('Shader') !== -1){
                     paramCount++;
                     (function(shaderPath){
-                        var request = new XMLHttpRequest();
+                        let request = new XMLHttpRequest();
                         request.onreadystatechange = function () {
                             if (request.readyState === 4) { //if this reqest is done
                                 //add this file to the results object
@@ -70,13 +70,13 @@ var ShaderUtil = {
          * @param shaderObj
          * @param cb
          */
-        var createShader =  function( shaderObj,  cb){
+        let createShader =  function( shaderObj,  cb){
 
             readShader( shaderObj ,
                 function( shaderSource ){
 
-                    var shaderProgram = gl.createProgram();
-                    var vertexShader, fragShader;
+                    let shaderProgram = gl.createProgram();
+                    let vertexShader, fragShader;
 
 
 
@@ -99,14 +99,14 @@ var ShaderUtil = {
                     }
 
 
-                    var singleShaderInfo = {
+                    let singleShaderInfo = {
                         program: shaderProgram,
                         attribLocations: { },
                         uniformLocations: {  },
                     };
 
 
-                    var i ,locationName;
+                    let i ,locationName;
                     for( i = 0;i < shaderObj['attrInfo'].length; i++){
                         locationName = shaderObj['attrInfo'][i];
                         singleShaderInfo.attribLocations[ locationName ] = gl.getAttribLocation(shaderProgram, locationName);
@@ -130,9 +130,9 @@ var ShaderUtil = {
 
 
 
-        var shaderInfo = {};
-        var shaderCount = Object.keys(shaderData).length;
-        for( var key in shaderData ){
+        let shaderInfo = {};
+        let shaderCount = Object.keys(shaderData).length;
+        for( let key in shaderData ){
 
             (function( shaderName){
                 createShader(shaderData[shaderName],  function( result ){
@@ -147,7 +147,7 @@ var ShaderUtil = {
     },
 };
 
-var Utils = {
+let Utils = {
 
 
 
@@ -165,31 +165,31 @@ var Utils = {
             cb( this.objHash[objPath] );
         }
         else{
-            var     readObjData = function( objStr ){
+            let     readObjData = function( objStr ){
 
 
                 //임시로 저장해둘 배열
-                var vertex_temp = [];
-                var texCoord_temp = [];
-                var normal_temp = [];
+                let vertex_temp = [];
+                // let texCoord_temp = [];
+                let normal_temp = [];
 
 
-                var resultObj = {};
-                var targetMaterial = null;
+                let resultObj = {};
+                let targetMaterial = null;
 
-                var hashData = {};
-                var targetMaterialHashData = null;
-
-
-                var aabbData = [999,-999,999,-999,999,-999];
+                let hashData = {};
+                let targetMaterialHashData = null;
 
 
-                var quadIndex = [0, 1, 2, 0, 2, 3];
+                let aabbData = [999,-999,999,-999,999,-999];
 
-                // var tempArr = objStr.split('\n');
-                var tempArr = Utils.stringSplit( objStr,'\n' );
-                var tempArr_t;
-                for( var i = 0; i < tempArr.length ; i++){
+
+                let quadIndex = [0, 1, 2, 0, 2, 3];
+
+                // let tempArr = objStr.split('\n');
+                let tempArr = Utils.stringSplit( objStr,'\n' );
+                let tempArr_t;
+                for( let i = 0; i < tempArr.length ; i++){
                     // tempArr_t = tempArr[i].split(' ');
                     tempArr_t = Utils.stringSplit( tempArr[i],' ' );
                     //    console.log(tempArr_t);
@@ -230,8 +230,8 @@ var Utils = {
                         }
                     }
                     else if( tempArr_t[0] === 'vt'){
-                        texCoord_temp.push(tempArr_t[1]);
-                        texCoord_temp.push(tempArr_t[2]);
+                        // texCoord_temp.push(tempArr_t[1]);
+                        // texCoord_temp.push(tempArr_t[2]);
                     }
                     else if( tempArr_t[0] === 'vn'){
                         normal_temp.push(tempArr_t[1]);
@@ -240,19 +240,19 @@ var Utils = {
                     }
                     else if( tempArr_t[0] === 'f'){
 
-                        for(var j = 0;j < quadIndex.length;j++){
+                        for(let j = 0;j < quadIndex.length;j++){
 
                             if(targetMaterial === null){
                                 console.warn("targetMaterial is null");
                                 continue;
                             }
-                            var triangleIndex = quadIndex[j] + 1;
+                            let triangleIndex = quadIndex[j] + 1;
 
-                            var vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
-                            var nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
+                            let vIndex0 = tempArr_t[triangleIndex].split('/')[0] - 1;
+                            let nIndex0 = tempArr_t[triangleIndex].split('/')[2] - 1;
 
-                            var hashKey = (vIndex0 << 16) + nIndex0;
-                            var index_temp = -1;
+                            let hashKey = (vIndex0 << 16) + nIndex0;
+                            let index_temp = -1;
 
                             if (targetMaterialHashData.hasOwnProperty( hashKey )){
                                 targetMaterial.index.push( targetMaterialHashData[hashKey]);
@@ -290,12 +290,12 @@ var Utils = {
                 return resultObj;
 
             };
-            var request = new XMLHttpRequest();
-            var self = this;
+            let request = new XMLHttpRequest();
+            let self = this;
             request.onreadystatechange = function () {
                 if (request.readyState === 4) { //if this reqest is done
                     //add this file to the results object
-                    var result = readObjData(request.responseText);
+                    let result = readObjData(request.responseText);
 
                     self.objHash[objPath] = result;
                     cb( result );
@@ -309,12 +309,12 @@ var Utils = {
     },
 
     readMtl : function( mtlPath, cb ){
-        var readMtlData = function( mtlStr ){
-            var result ={};
-            var tempArr = Utils.stringSplit( mtlStr,'\n' );
-            var tempArr_t;
-            var materialName = 'null';
-            for( var i = 0; i < tempArr.length ; i++) {
+        let readMtlData = function( mtlStr ){
+            let result ={};
+            let tempArr = Utils.stringSplit( mtlStr,'\n' );
+            let tempArr_t;
+            let materialName = 'null';
+            for( let i = 0; i < tempArr.length ; i++) {
                // console.log(tempArr[i]);
                 tempArr_t = Utils.stringSplit( tempArr[i],' ' );
                 if( tempArr_t[0] === 'newmtl'){
@@ -323,7 +323,7 @@ var Utils = {
                 }
                 else if (tempArr_t[0] !== '#' ){
                     result[materialName][ tempArr_t[0]] = [];
-                    for(var j = 1;j < tempArr_t.length;j++){
+                    for(let j = 1;j < tempArr_t.length;j++){
                         result[materialName][ tempArr_t[0]].push( tempArr_t[j] );
                     }
                 }
@@ -335,11 +335,11 @@ var Utils = {
 
 
 
-        var request = new XMLHttpRequest();
+        let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (request.readyState === 4) { //if this reqest is done
                 //add this file to the results object
-                var result = readMtlData(request.responseText);
+                let result = readMtlData(request.responseText);
                 cb( result );
             }
         };
@@ -366,8 +366,8 @@ var Utils = {
      * @returns {*}
      */
     normalize: function(pOut, v){
-        var out = [] || pOut;
-        var inverseMagnitude = 1.0 / this.magnitudeOfVector(v);
+        let out = [] || pOut;
+        let inverseMagnitude = 1.0 / this.magnitudeOfVector(v);
         out[0] = v[0] * inverseMagnitude;
         out[1] = v[1] * inverseMagnitude;
         if(v.length >= 2)
@@ -383,9 +383,9 @@ var Utils = {
      * @returns {*}
      */
     stringSplit : function ( string, splitKey ){
-        var result = string.split(splitKey);
+        let result = string.split(splitKey);
 
-        for(var i = 0;i < result.length;i++){
+        for(let i = 0;i < result.length;i++){
             result[i] = result[i].trim();
         }
 
@@ -400,10 +400,10 @@ var Utils = {
 
 
     cross : function(out, a, b) {
-        var ax = a[0],
+        let ax = a[0],
             ay = a[1],
             az = a[2];
-        var bx = b[0],
+        let bx = b[0],
             by = b[1],
             bz = b[2];
 
@@ -423,10 +423,10 @@ var Utils = {
 
 
     transformMatrix : function(out, a, m) {
-        var x = a[0],
+        let x = a[0],
         y = a[1],
         z = a[2];
-        var w = m[3] * x + m[7] * y + m[11] * z + m[15];
+        let w = m[3] * x + m[7] * y + m[11] * z + m[15];
         w = w || 1.0;
         out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
         out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
@@ -441,7 +441,7 @@ var Utils = {
     // 참고 : https://en.wikipedia.org/wiki/Pl%C3%BCcker_coordinates
 
     getPluckerCoord : function( a, b ){
-        var cross = [];
+        let cross = [];
 
         this.normalize( a, a);
         this.normalize( b, b);
@@ -458,17 +458,17 @@ var Utils = {
     },
 
     intersectRayTriangle : function( rayData, triangle ){
-        var origin = rayData.origin ;
-        var dir = rayData.direction;
+        let origin = rayData.origin ;
+        let dir = rayData.direction;
 
-        var rayPluckerData = this.getPluckerCoord(origin, this.vectorAdd(origin , dir) );
+        let rayPluckerData = this.getPluckerCoord(origin, this.vectorAdd(origin , dir) );
 
 
-        var trianglePluckerData = null;
-        var pluckerSide = null;
-        var prevSideData = null;
-        for(var i = 0;i < triangle.length;i++){
-            if( i != triangle.length -1 ){
+        let trianglePluckerData = null;
+        let pluckerSide = null;
+        let prevSideData = null;
+        for(let i = 0;i < triangle.length;i++){
+            if( i !== triangle.length -1 ){
                 trianglePluckerData = this.getPluckerCoord(triangle[i], triangle[i+1] ); 
             }
             else{

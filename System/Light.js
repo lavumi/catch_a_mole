@@ -1,9 +1,9 @@
-var Light = (function(){
+let Light = (function(){
 
-    var direction = [];
+    let direction = [];
 
 
-    var _light = function(){
+    let _light = function(){
        direction = [0,0,0];
     };
 
@@ -21,8 +21,8 @@ var Light = (function(){
 
     _light.prototype.update = function( deltaTime ){
 
-        var dt = deltaTime * 1000;
-        var rotPos ;
+        let dt = deltaTime * 1000;
+        let rotPos ;
         // rotPos = [
         //     direction[0] * Math.cos(-Math.PI / 180 ) - direction[1] * Math.sin(-Math.PI / 180 ),
         //     direction[0] * Math.sin(-Math.PI / 180) + direction[1] * Math.cos(-Math.PI / 180 ),
@@ -43,9 +43,9 @@ var Light = (function(){
 
 
     _light.prototype.onMouseMove = function( event){
-        var position = getMousePosition(event, canvas);
+        let position = getMousePosition(event, canvas);
         console.log(position);
-        var pos = [position.x, position.y];
+        let pos = [position.x, position.y];
         Utils.normalize(pos, pos);
         direction = [pos[0], pos[1],1];
         Utils.normalize(direction , direction);
